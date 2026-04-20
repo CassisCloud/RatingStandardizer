@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title>Rating Standardizer pop icon</title>
+  <desc>Bright icon with lively badges converging into one standard badge.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e0836"/>
+      <stop offset="100%" stop-color="#4e1979"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="url(#bg)"/>
+  <circle cx="66" cy="68" r="26" fill="#ffcf5a"/>
+  <circle cx="78" cy="150" r="30" fill="#24d2c7"/>
+  <circle cx="182" cy="66" r="20" fill="#ff7b7b"/>
+  <path d="M96 82c23 18 37 33 43 46" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/>
+  <path d="M104 156c15-8 29-14 42-18" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round"/>
+  <rect x="146" y="96" width="72" height="84" rx="18" fill="#ffffff"/>
+  <text x="66" y="76" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="900" fill="#3d2b00">PG</text>
+  <text x="78" y="158" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="900" fill="#083633">12+</text>
+  <text x="182" y="73" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="900" fill="#4a1010">R</text>
+  <text x="182" y="146" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="900" fill="#451a69">SYNC</text>
+</svg>

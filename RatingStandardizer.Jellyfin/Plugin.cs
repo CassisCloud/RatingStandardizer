@@ -32,6 +32,9 @@ public sealed class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     public override string Name => "Rating Standardizer";
 
     /// <inheritdoc />
+    public override string Description => "Automatically standardizes official ratings for movies and series using configurable mappings.";
+
+    /// <inheritdoc />
     public override Guid Id => Guid.Parse("f170154e-02fd-4f37-a008-70811ca49120");
 
     /// <inheritdoc />

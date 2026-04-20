@@ -6,10 +6,18 @@
     <RootNamespace>RatingStandardizer.Jellyfin</RootNamespace>
     <AssemblyName>Jellyfin.Plugin.RatingStandardizer</AssemblyName>
     <JellyfinVersion Condition="'$(JellyfinVersion)' == ''">10.11.6</JellyfinVersion>
-    <Version>1.0.8.0</Version>
-    <AssemblyVersion>1.0.8.0</AssemblyVersion>
-    <FileVersion>1.0.8.0</FileVersion>
-    <InformationalVersion>1.0.8</InformationalVersion>
+    <Version>1.0.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0</InformationalVersion>
+    <Authors>CassisCloud</Authors>
+    <Company>CassisCloud</Company>
+    <Product>Rating Standardizer</Product>
+    <Description>Automatically standardizes official ratings for movies and series using configurable mappings.</Description>
+    <PackageTags>jellyfin;emby;metadata;rating;official-rating</PackageTags>
+    <RepositoryUrl>https://github.com/CassisCloud/rating-standardizer</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/CassisCloud/rating-standardizer</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
