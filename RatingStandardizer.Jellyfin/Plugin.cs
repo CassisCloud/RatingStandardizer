@@ -37,12 +37,14 @@ public sealed class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     /// <inheritdoc />
     public IEnumerable<PluginPageInfo> GetPages()
     {
+        var displayName = Name;
+
         return
         [
             new PluginPageInfo
             {
-                Name = Name,
-                DisplayName = Name,
+                Name = "ratingstandardizer-v6",
+                DisplayName = displayName,
                 EnableInMainMenu = true,
                 EmbeddedResourcePath = $"{GetType().Namespace}.Configuration.configPage.html"
             }

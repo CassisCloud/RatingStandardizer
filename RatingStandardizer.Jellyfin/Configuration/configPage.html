@@ -4,12 +4,58 @@
     <meta charset="utf-8">
     <title>Rating Standardizer</title>
     <style>
+        #RatingStandardizerConfigForm {
+            display: grid;
+            gap: 1rem;
+        }
+
+        #RatingStandardizerConfigForm [hidden] {
+            display: none !important;
+        }
+
+        .ratingStandardizerCard {
+            padding: 1.1rem 1.15rem;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.032));
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+        }
+
+        .ratingStandardizerCardHeader {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: flex-start;
+            margin-bottom: 0.9rem;
+        }
+
+        .ratingStandardizerCardHeader h2,
+        .ratingStandardizerCardHeader h3,
+        .ratingStandardizerCardHeader p {
+            margin: 0;
+        }
+
+        .ratingStandardizerCardHeader p {
+            opacity: 0.78;
+            margin-top: 0.3rem;
+        }
+
+        .ratingStandardizerToggleCard {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .ratingStandardizerToggleCopy {
+            min-width: 0;
+        }
+
         .ratingStandardizerToolbar {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.75em;
+            gap: 0.75rem;
             align-items: flex-end;
-            margin-top: 1em;
         }
 
         .ratingStandardizerPresetContainer {
@@ -18,75 +64,237 @@
             flex: 1 1 18rem;
         }
 
+        .ratingStandardizerPresetButton {
+            min-width: 9rem;
+        }
+
+        .ratingStandardizerRestoreButton {
+            min-width: 9rem;
+        }
+
+        .ratingStandardizerPresetDescription {
+            margin-top: 0.75rem;
+            opacity: 0.82;
+        }
+
         .ratingStandardizerMappingsWrap {
             overflow-x: auto;
-            margin-top: 1em;
+            margin-top: 1rem;
         }
 
         .ratingStandardizerMappingsTable {
-            width: auto;
-            min-width: 32rem;
-            max-width: 44rem;
+            width: 100%;
+            min-width: 34rem;
+            border-collapse: separate;
+            border-spacing: 0 0.7rem;
         }
 
-        .ratingStandardizerMappingsTable th,
-        .ratingStandardizerMappingsTable td {
-            padding: 0.45em 0.5em;
-            vertical-align: middle;
-        }
-
-        .ratingStandardizerMappingsTable th {
+        .ratingStandardizerMappingsTable thead th {
+            padding: 0 0.75rem 0.2rem;
             white-space: nowrap;
+            font-size: 0.8rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            opacity: 0.65;
+        }
+
+        .ratingStandardizerMappingsTable tbody td {
+            padding: 0.75rem;
+            vertical-align: middle;
+            background: rgba(255, 255, 255, 0.03);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .ratingStandardizerMappingsTable tbody td:first-child {
+            border-left: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px 0 0 16px;
+        }
+
+        .ratingStandardizerMappingsTable tbody td:last-child {
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 0 16px 16px 0;
         }
 
         .ratingStandardizerMappingsTable input {
             margin: 0;
         }
 
-        .ratingStandardizerOriginalInput {
-            width: 11rem;
+        .ratingStandardizerOriginalInput,
+        .ratingStandardizerTargetInput {
+            width: 100%;
             max-width: 100%;
         }
 
-        .ratingStandardizerTargetInput {
-            width: 8rem;
-            max-width: 100%;
+        .ratingStandardizerArrowCell {
+            width: 1%;
+            padding-left: 0.2rem;
+            padding-right: 0.2rem;
+            text-align: center;
+            font-size: 1.18rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.92);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.18);
         }
 
         .ratingStandardizerDeleteCell {
             width: 1%;
             white-space: nowrap;
+            text-align: right;
         }
 
         .ratingStandardizerDeleteButton {
-            min-width: auto;
-            padding: 0.35em 0.75em;
+            min-width: 0;
+            width: 2rem;
+            height: 2rem;
+            padding: 0;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            line-height: 1;
+            color: #ffd7d7;
+            background: rgba(225, 68, 68, 0.88);
+            border: 1px solid rgba(255, 138, 138, 0.88);
+            box-shadow: 0 10px 22px rgba(225, 68, 68, 0.18);
+            transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+        }
+
+        .ratingStandardizerDeleteButton span {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .ratingStandardizerDeleteButton:hover {
+            color: #fff;
+            background: rgba(194, 42, 42, 0.96);
+            border-color: rgba(255, 169, 169, 0.95);
+            transform: scale(1.04);
         }
 
         .ratingStandardizerActions {
             display: flex;
-            gap: 0.75em;
+            gap: 0.75rem;
             flex-wrap: wrap;
-            margin-top: 1em;
+            margin-top: 1rem;
         }
 
         .ratingStandardizerStatus {
             display: none;
-            color: #52b54b;
-            margin-top: 1em;
+            color: #6de28d;
+            margin-top: 1rem;
         }
 
-        @media (max-width: 600px) {
+        .ratingStandardizerActionRow {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .ratingStandardizerLibraryWrap {
+            margin-top: 0.25rem;
+        }
+
+        .ratingStandardizerLibraryList {
+            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+            gap: 0.75rem;
+        }
+
+        .ratingStandardizerLibraryList.is-disabled {
+            opacity: 0.45;
+        }
+
+        .ratingStandardizerLibraryItem {
+            position: relative;
+            display: block;
+            padding: 0;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            background: rgba(255, 255, 255, 0.085);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 8px 20px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+            overflow: hidden;
+        }
+
+        .ratingStandardizerLibraryItem:hover {
+            transform: translateY(-1px);
+            border-color: rgba(255, 255, 255, 0.34);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .ratingStandardizerLibraryItem.is-selected {
+            border-color: rgba(0, 185, 150, 0.55);
+            background: rgba(0, 185, 150, 0.1);
+            box-shadow: 0 0 0 1px rgba(0, 185, 150, 0.16) inset, 0 10px 28px rgba(0, 185, 150, 0.16);
+        }
+
+        .ratingStandardizerLibraryItem input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .ratingStandardizerLibraryContent {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.85rem;
+            align-items: center;
+            min-height: 4.5rem;
+            padding: 0.95rem 1rem;
+        }
+
+        .ratingStandardizerLibraryCheck {
+            width: 1.15rem;
+            height: 1.15rem;
+            border-radius: 999px;
+            border: 2px solid rgba(255, 255, 255, 0.28);
+            background: rgba(255, 255, 255, 0.04);
+            box-sizing: border-box;
+            transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .ratingStandardizerLibraryItem.is-selected .ratingStandardizerLibraryCheck {
+            border-color: rgba(0, 185, 150, 0.95);
+            background: rgba(0, 185, 150, 0.92);
+            box-shadow: 0 0 0 4px rgba(0, 185, 150, 0.16);
+        }
+
+        .ratingStandardizerLibraryLabel {
+            min-width: 0;
+        }
+
+        .ratingStandardizerLibraryName {
+            display: block;
+            font-weight: 600;
+            line-height: 1.35;
+            word-break: break-word;
+        }
+
+        .ratingStandardizerLibraryStatus {
+            display: none;
+            margin-top: 0.75rem;
+            color: #d4b106;
+        }
+
+        .ratingStandardizerMuted {
+            opacity: 0.72;
+        }
+
+        @media (max-width: 700px) {
+            .ratingStandardizerToggleCard,
+            .ratingStandardizerCardHeader {
+                display: block;
+            }
+
+            .ratingStandardizerToggleCard .checkboxContainer {
+                margin-top: 0.8rem;
+            }
+
             .ratingStandardizerMappingsTable {
-                min-width: 26rem;
-            }
-
-            .ratingStandardizerOriginalInput {
-                width: 8.5rem;
-            }
-
-            .ratingStandardizerTargetInput {
-                width: 6.5rem;
+                min-width: 28rem;
             }
         }
     </style>
@@ -96,70 +304,105 @@
         <div data-role="content">
             <div class="content-primary">
                 <form id="RatingStandardizerConfigForm">
-                    <div class="checkboxContainer checkboxContainer-withDescription">
-                        <label class="emby-checkbox-label">
-                            <input id="IsEnabled" type="checkbox" is="emby-checkbox" />
-                            <span>Enable plugin</span>
-                        </label>
-                        <div class="fieldDescription">When enabled, ratings are standardized on item add/update events and via the scheduled task.</div>
-                    </div>
-
-                    <div class="sectionTitleContainer">
-                        <h2 class="sectionTitle">Rating Mappings</h2>
-                    </div>
-
-                    <div class="fieldDescription">Choose a preset to target a regional rating system, then fine-tune the mappings if needed.</div>
-                    <div id="ConfigErrorMessage" class="fieldDescription" style="display:none; color:#ff6b6b; margin-top:1em;"></div>
-                    <div id="ConfigStatusMessage" class="fieldDescription ratingStandardizerStatus"></div>
-
-                    <div class="ratingStandardizerToolbar">
-                        <div class="selectContainer ratingStandardizerPresetContainer">
-                            <label class="selectLabel" for="PresetSelector">Preset</label>
-                            <select is="emby-select" id="PresetSelector" class="emby-select-withcolor emby-select">
-                                <option value="japan">Japan</option>
-                                <option value="unitedStates">United States</option>
-                                <option value="europe">Europe (6/12/16/18)</option>
-                                <option value="australia">Australia</option>
-                                <option value="blank">Blank / Custom</option>
-                            </select>
+                    <section class="ratingStandardizerCard ratingStandardizerToggleCard">
+                        <div class="ratingStandardizerToggleCopy">
+                            <h2 class="sectionTitle">Rating Standardizer</h2>
+                            <div class="fieldDescription">Standardize `OfficialRating`, lock the field after conversion, and keep processing scoped to the libraries you choose.</div>
                         </div>
-                        <button is="emby-button" id="ApplyPresetButton" type="button" class="button-flat emby-button">
-                            <span>Apply preset</span>
-                        </button>
-                    </div>
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label class="emby-checkbox-label">
+                                <input id="IsEnabled" type="checkbox" is="emby-checkbox" />
+                                <span>Enable plugin</span>
+                            </label>
+                            <div class="fieldDescription">Apply changes on item add/update and through the scheduled task.</div>
+                        </div>
+                    </section>
 
-                    <div id="PresetDescription" class="fieldDescription" style="margin-top:0.5em;"></div>
+                    <section class="ratingStandardizerCard">
+                        <div class="ratingStandardizerCardHeader">
+                            <div>
+                                <h2 class="sectionTitle">Target Libraries</h2>
+                                <p class="fieldDescription">Choose whether to process every library or limit the plugin to a selected subset.</p>
+                            </div>
+                        </div>
+                        <div class="ratingStandardizerCardBody">
+                            <div class="checkboxContainer checkboxContainer-withDescription ratingStandardizerLibraryWrap">
+                                <label class="emby-checkbox-label">
+                                    <input id="AllLibraries" type="checkbox" is="emby-checkbox" />
+                                    <span>Limit to selected libraries</span>
+                                </label>
+                                <div class="fieldDescription">Turn this on to choose specific libraries. Leave it off to process all libraries.</div>
+                            </div>
+                            <div class="fieldDescription" id="LibrarySelectionHint">Enable this option to pick the libraries you want to target.</div>
+                            <div id="LibraryListContainer" class="ratingStandardizerLibraryList" hidden></div>
+                            <div id="LibraryLoadStatus" class="fieldDescription ratingStandardizerLibraryStatus"></div>
+                        </div>
+                    </section>
 
-                    <div class="ratingStandardizerMappingsWrap">
-                        <table class="tblForm ratingStandardizerMappingsTable">
-                            <thead>
-                                <tr>
-                                    <th style="text-align:left;">Original</th>
-                                    <th style="text-align:left;">Target</th>
-                                    <th class="ratingStandardizerDeleteCell"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="MappingsTableBody"></tbody>
-                        </table>
-                    </div>
+                    <section class="ratingStandardizerCard">
+                        <div class="ratingStandardizerCardHeader">
+                            <div>
+                                <h2 class="sectionTitle">Rating Mappings</h2>
+                                <p class="fieldDescription">Pick a preset as a starting point, then fine-tune the mappings below. `12+`, JP ratings, and TV ratings are supported in the built-in presets.</p>
+                            </div>
+                        </div>
+                        <div class="ratingStandardizerCardBody">
+                            <div class="ratingStandardizerToolbar">
+                                <div class="selectContainer ratingStandardizerPresetContainer">
+                                    <label class="selectLabel" for="PresetSelector">Preset</label>
+                                    <select is="emby-select" id="PresetSelector" class="emby-select-withcolor emby-select">
+                                        <option value="japan">Japan</option>
+                                        <option value="unitedStates">United States</option>
+                                        <option value="europe">Europe (6/12/16/18)</option>
+                                        <option value="australia">Australia</option>
+                                        <option value="blank">Custom</option>
+                                    </select>
+                                </div>
+                                <button is="emby-button" id="ApplyPresetButton" type="button" class="button-flat emby-button ratingStandardizerPresetButton">
+                                    <span>Apply preset</span>
+                                </button>
+                                <button is="emby-button" id="RestoreDefaultsButton" type="button" class="button-flat emby-button ratingStandardizerRestoreButton" hidden>
+                                    <span>Restore defaults</span>
+                                </button>
+                            </div>
 
-                    <div class="ratingStandardizerActions">
-                        <button is="emby-button" id="AddMappingButton" type="button" class="button-flat emby-button">
-                            <span>Add mapping</span>
-                        </button>
-                    </div>
+                            <div id="PresetDescription" class="fieldDescription ratingStandardizerPresetDescription"></div>
+                            <div id="ConfigErrorMessage" class="fieldDescription" style="display:none; color:#ff6b6b; margin-top:1em;"></div>
+                            <div id="ConfigStatusMessage" class="fieldDescription ratingStandardizerStatus"></div>
 
-                    <div style="margin-top:2em;">
+                            <div class="fieldDescription" id="MappingEditorHint">Switch to `Custom` to edit mappings manually.</div>
+                            <div id="MappingsEditor" hidden>
+                                <div class="ratingStandardizerMappingsWrap">
+                                    <table class="tblForm ratingStandardizerMappingsTable">
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align:left;">Original rating</th>
+                                                <th class="ratingStandardizerArrowCell"></th>
+                                                <th style="text-align:left;">Target rating</th>
+                                                <th class="ratingStandardizerDeleteCell"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="MappingsTableBody"></tbody>
+                                    </table>
+                                </div>
+
+                                <div class="ratingStandardizerActions">
+                                    <button is="emby-button" id="AddMappingButton" type="button" class="button-flat emby-button">
+                                        <span>Add mapping</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="ratingStandardizerCard ratingStandardizerActionRow">
                         <button is="emby-button" type="submit" class="raised button-submit block emby-button">
                             <span>Save</span>
                         </button>
-                    </div>
-
-                    <div style="margin-top:1em;">
                         <button is="emby-button" id="RunNowButton" type="button" class="button-flat block emby-button">
                             <span>Run Now</span>
                         </button>
-                    </div>
+                    </section>
                 </form>
             </div>
         </div>
@@ -174,15 +417,28 @@
                             { OriginalRating: '6', TargetRating: 'G' },
                             { OriginalRating: '6+', TargetRating: 'G' },
                             { OriginalRating: 'G', TargetRating: 'G' },
+                            { OriginalRating: 'JP-0', TargetRating: 'G' },
+                            { OriginalRating: 'JP-G', TargetRating: 'G' },
                             { OriginalRating: 'PG', TargetRating: 'PG12' },
+                            { OriginalRating: 'TV-PG', TargetRating: 'PG12' },
+                            { OriginalRating: 'JP-12', TargetRating: 'PG12' },
+                            { OriginalRating: 'JP-PG', TargetRating: 'PG12' },
+                            { OriginalRating: 'JP-PG-13', TargetRating: 'PG12' },
+                            { OriginalRating: 'JP-PG12', TargetRating: 'PG12' },
+                            { OriginalRating: '12+', TargetRating: 'PG12' },
                             { OriginalRating: 'PG-13', TargetRating: 'PG12' },
                             { OriginalRating: '14', TargetRating: 'PG12' },
                             { OriginalRating: 'TV-14', TargetRating: 'PG12' },
                             { OriginalRating: 'R', TargetRating: 'R15+' },
+                            { OriginalRating: 'JP-R15+', TargetRating: 'R15+' },
                             { OriginalRating: '15', TargetRating: 'R15+' },
                             { OriginalRating: '16', TargetRating: 'R15+' },
                             { OriginalRating: 'M', TargetRating: 'R15+' },
                             { OriginalRating: 'MA15+', TargetRating: 'R15+' },
+                            { OriginalRating: 'JP-R - 17+', TargetRating: 'R18+' },
+                            { OriginalRating: 'JP-R-17+', TargetRating: 'R18+' },
+                            { OriginalRating: 'JP-R18+', TargetRating: 'R18+' },
+                            { OriginalRating: 'TV-MA', TargetRating: 'R18+' },
                             { OriginalRating: 'NC-17', TargetRating: 'R18+' },
                             { OriginalRating: 'PL-18', TargetRating: 'R18+' },
                             { OriginalRating: 'Unrated', TargetRating: 'NR' },
@@ -194,19 +450,32 @@
                         description: 'Standardize ratings into G, PG, PG-13, R, NC-17, and NR.',
                         mappings: [
                             { OriginalRating: 'G', TargetRating: 'G' },
+                            { OriginalRating: 'JP-0', TargetRating: 'G' },
+                            { OriginalRating: 'JP-G', TargetRating: 'G' },
                             { OriginalRating: '6', TargetRating: 'PG' },
                             { OriginalRating: '6+', TargetRating: 'PG' },
                             { OriginalRating: 'PG', TargetRating: 'PG' },
                             { OriginalRating: '12', TargetRating: 'PG-13' },
+                            { OriginalRating: 'TV-PG', TargetRating: 'PG-13' },
+                            { OriginalRating: 'JP-12', TargetRating: 'PG-13' },
+                            { OriginalRating: 'JP-PG', TargetRating: 'PG-13' },
+                            { OriginalRating: 'JP-PG-13', TargetRating: 'PG-13' },
+                            { OriginalRating: 'JP-PG12', TargetRating: 'PG-13' },
+                            { OriginalRating: '12+', TargetRating: 'PG-13' },
                             { OriginalRating: '12A', TargetRating: 'PG-13' },
                             { OriginalRating: 'PG-13', TargetRating: 'PG-13' },
                             { OriginalRating: '14', TargetRating: 'PG-13' },
                             { OriginalRating: 'TV-14', TargetRating: 'PG-13' },
                             { OriginalRating: 'R', TargetRating: 'R' },
+                            { OriginalRating: 'JP-R15+', TargetRating: 'R' },
                             { OriginalRating: '15', TargetRating: 'R' },
                             { OriginalRating: '16', TargetRating: 'R' },
                             { OriginalRating: 'M', TargetRating: 'R' },
                             { OriginalRating: 'MA15+', TargetRating: 'R' },
+                            { OriginalRating: 'JP-R - 17+', TargetRating: 'NC-17' },
+                            { OriginalRating: 'JP-R-17+', TargetRating: 'NC-17' },
+                            { OriginalRating: 'JP-R18+', TargetRating: 'NC-17' },
+                            { OriginalRating: 'TV-MA', TargetRating: 'NC-17' },
                             { OriginalRating: '18', TargetRating: 'NC-17' },
                             { OriginalRating: 'NC-17', TargetRating: 'NC-17' },
                             { OriginalRating: 'PL-18', TargetRating: 'NC-17' },
@@ -219,19 +488,32 @@
                         description: 'Normalize ratings into G, 6, 12, 16, 18, and NR using a simple Europe-friendly age scale.',
                         mappings: [
                             { OriginalRating: 'G', TargetRating: 'G' },
+                            { OriginalRating: 'JP-0', TargetRating: 'G' },
+                            { OriginalRating: 'JP-G', TargetRating: 'G' },
                             { OriginalRating: '6', TargetRating: '6' },
                             { OriginalRating: '6+', TargetRating: '6' },
                             { OriginalRating: 'PG', TargetRating: '6' },
                             { OriginalRating: '12', TargetRating: '12' },
+                            { OriginalRating: 'TV-PG', TargetRating: '12' },
+                            { OriginalRating: 'JP-12', TargetRating: '12' },
+                            { OriginalRating: 'JP-PG', TargetRating: '12' },
+                            { OriginalRating: 'JP-PG-13', TargetRating: '12' },
+                            { OriginalRating: 'JP-PG12', TargetRating: '12' },
+                            { OriginalRating: '12+', TargetRating: '12' },
                             { OriginalRating: '12A', TargetRating: '12' },
                             { OriginalRating: 'PG-13', TargetRating: '12' },
                             { OriginalRating: '14', TargetRating: '12' },
                             { OriginalRating: 'TV-14', TargetRating: '12' },
+                            { OriginalRating: 'JP-R15+', TargetRating: '16' },
                             { OriginalRating: '15', TargetRating: '16' },
                             { OriginalRating: '16', TargetRating: '16' },
                             { OriginalRating: 'M', TargetRating: '16' },
                             { OriginalRating: 'R', TargetRating: '16' },
                             { OriginalRating: 'MA15+', TargetRating: '16' },
+                            { OriginalRating: 'JP-R - 17+', TargetRating: '18' },
+                            { OriginalRating: 'JP-R-17+', TargetRating: '18' },
+                            { OriginalRating: 'JP-R18+', TargetRating: '18' },
+                            { OriginalRating: 'TV-MA', TargetRating: '18' },
                             { OriginalRating: '18', TargetRating: '18' },
                             { OriginalRating: 'NC-17', TargetRating: '18' },
                             { OriginalRating: 'PL-18', TargetRating: '18' },
@@ -244,19 +526,32 @@
                         description: 'Map ratings into G, PG, M, MA15+, R18+, and NR for an Australian-style scale.',
                         mappings: [
                             { OriginalRating: 'G', TargetRating: 'G' },
+                            { OriginalRating: 'JP-0', TargetRating: 'G' },
+                            { OriginalRating: 'JP-G', TargetRating: 'G' },
                             { OriginalRating: '6', TargetRating: 'PG' },
                             { OriginalRating: '6+', TargetRating: 'PG' },
                             { OriginalRating: 'PG', TargetRating: 'PG' },
                             { OriginalRating: '12', TargetRating: 'M' },
+                            { OriginalRating: 'TV-PG', TargetRating: 'M' },
+                            { OriginalRating: 'JP-12', TargetRating: 'M' },
+                            { OriginalRating: 'JP-PG', TargetRating: 'M' },
+                            { OriginalRating: 'JP-PG-13', TargetRating: 'M' },
+                            { OriginalRating: 'JP-PG12', TargetRating: 'M' },
+                            { OriginalRating: '12+', TargetRating: 'M' },
                             { OriginalRating: '12A', TargetRating: 'M' },
                             { OriginalRating: 'PG-13', TargetRating: 'M' },
                             { OriginalRating: '14', TargetRating: 'M' },
                             { OriginalRating: 'TV-14', TargetRating: 'M' },
                             { OriginalRating: 'M', TargetRating: 'M' },
+                            { OriginalRating: 'JP-R15+', TargetRating: 'MA15+' },
                             { OriginalRating: '15', TargetRating: 'MA15+' },
                             { OriginalRating: '16', TargetRating: 'MA15+' },
                             { OriginalRating: 'R', TargetRating: 'MA15+' },
                             { OriginalRating: 'MA15+', TargetRating: 'MA15+' },
+                            { OriginalRating: 'JP-R - 17+', TargetRating: 'R18+' },
+                            { OriginalRating: 'JP-R-17+', TargetRating: 'R18+' },
+                            { OriginalRating: 'JP-R18+', TargetRating: 'R18+' },
+                            { OriginalRating: 'TV-MA', TargetRating: 'R18+' },
                             { OriginalRating: '18', TargetRating: 'R18+' },
                             { OriginalRating: 'NC-17', TargetRating: 'R18+' },
                             { OriginalRating: 'PL-18', TargetRating: 'R18+' },
@@ -283,6 +578,15 @@
                 var presetDescription = document.querySelector('#PresetDescription');
                 var errorMessage = document.querySelector('#ConfigErrorMessage');
                 var statusMessage = document.querySelector('#ConfigStatusMessage');
+                var allLibrariesCheckbox = document.querySelector('#AllLibraries');
+                var libraryListContainer = document.querySelector('#LibraryListContainer');
+                var librarySelectionHint = document.querySelector('#LibrarySelectionHint');
+                var libraryLoadStatus = document.querySelector('#LibraryLoadStatus');
+                var mappingsEditor = document.querySelector('#MappingsEditor');
+                var mappingEditorHint = document.querySelector('#MappingEditorHint');
+                var restoreDefaultsButton = document.querySelector('#RestoreDefaultsButton');
+                var libraryListLoaded = false;
+                var lastSavedTargetLibraryIds = [];
 
                 function setError(message) {
                     if (!message) {
@@ -306,6 +610,224 @@
                     statusMessage.style.display = 'block';
                 }
 
+                function setLibraryStatus(message) {
+                    if (!message) {
+                        libraryLoadStatus.textContent = '';
+                        libraryLoadStatus.style.display = 'none';
+                        return;
+                    }
+
+                    libraryLoadStatus.textContent = message;
+                    libraryLoadStatus.style.display = 'block';
+                }
+
+                function ensureRuntimeStyles() {
+                    if (document.getElementById('RatingStandardizerRuntimeStyles')) {
+                        return;
+                    }
+
+                    var style = document.createElement('style');
+                    style.id = 'RatingStandardizerRuntimeStyles';
+                    style.textContent = [
+                        '#RatingStandardizerConfigPage [hidden]{display:none !important;}',
+                        '#RatingStandardizerConfigForm{display:grid;gap:1rem;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerCard{padding:1.1rem 1.15rem;border:1px solid rgba(255,255,255,.14);border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.032));box-shadow:0 16px 40px rgba(0,0,0,.18), inset 0 0 0 1px rgba(255,255,255,.025);}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerCardHeader{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;margin-bottom:.9rem;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerCardHeader h2,#RatingStandardizerConfigPage .ratingStandardizerCardHeader p{margin:0;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerCardHeader p{opacity:.78;margin-top:.3rem;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerToggleCard{display:flex;align-items:center;justify-content:space-between;gap:1rem;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerToolbar{display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerPresetContainer{min-width:16rem;max-width:22rem;flex:1 1 18rem;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerPresetButton,#RatingStandardizerConfigPage .ratingStandardizerRestoreButton{min-width:9rem;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerPresetDescription{margin-top:.75rem;opacity:.82;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerMappingsWrap{overflow-x:auto;margin-top:1rem;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerMappingsTable{width:100%;min-width:34rem;border-collapse:separate;border-spacing:0 .7rem;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerMappingsTable thead th{padding:0 .75rem .2rem;white-space:nowrap;font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;opacity:.65;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerMappingsTable tbody td{padding:.75rem;vertical-align:middle;background:rgba(255,255,255,.03);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerMappingsTable tbody td:first-child{border-left:1px solid rgba(255,255,255,.06);border-radius:16px 0 0 16px;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerMappingsTable tbody td:last-child{border-right:1px solid rgba(255,255,255,.06);border-radius:0 16px 16px 0;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerOriginalInput,#RatingStandardizerConfigPage .ratingStandardizerTargetInput{width:100%;max-width:100%;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerArrowCell{width:1%;padding:0 .2rem;text-align:center;font-size:1rem;color:rgba(255,255,255,.98);}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerArrowGlyph{display:inline-flex;align-items:center;justify-content:center;min-width:1.9rem;height:1.9rem;padding:0 .4rem;border-radius:999px;background:rgba(255,255,255,.18);color:#fff;font-size:1.08rem;font-weight:700;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerDeleteCell{width:1%;white-space:nowrap;text-align:right;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerDeleteButton{min-width:0;width:2rem;height:2rem;padding:0;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;font-size:1.2rem;line-height:1;color:#ffd7d7;background:rgba(225,68,68,.88);border:1px solid rgba(255,138,138,.88);box-shadow:0 10px 22px rgba(225,68,68,.18);transition:background-color .18s ease,color .18s ease,border-color .18s ease,transform .18s ease;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerDeleteButton span{color:#fff;font-weight:700;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerDeleteButton:hover{color:#fff;background:rgba(194,42,42,.96);border-color:rgba(255,169,169,.95);transform:scale(1.04);}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerActions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerActionRow{display:grid;gap:.75rem;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerLibraryList{margin-top:1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:.75rem;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerLibraryList.is-disabled{opacity:.45;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerLibraryItem{position:relative;display:block;padding:0;border-radius:16px;border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.085);box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 8px 20px rgba(0,0,0,.08);cursor:pointer;transition:border-color .18s ease,background-color .18s ease,box-shadow .18s ease,transform .18s ease;overflow:hidden;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerLibraryItem:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.34);background:rgba(255,255,255,.12);}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerLibraryItem.is-selected{border-color:rgba(0,185,150,.55);background:rgba(0,185,150,.1);box-shadow:0 0 0 1px rgba(0,185,150,.16) inset,0 10px 28px rgba(0,185,150,.16);}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerLibraryItem input{position:absolute;opacity:0;pointer-events:none;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerLibraryContent{display:grid;grid-template-columns:auto 1fr;gap:.85rem;align-items:center;min-height:4.5rem;padding:.95rem 1rem;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerLibraryCheck{width:1.15rem;height:1.15rem;border-radius:999px;border:2px solid rgba(255,255,255,.28);background:rgba(255,255,255,.04);box-sizing:border-box;transition:border-color .18s ease,background-color .18s ease,box-shadow .18s ease;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerLibraryItem.is-selected .ratingStandardizerLibraryCheck{border-color:rgba(0,185,150,.95);background:rgba(0,185,150,.92);box-shadow:0 0 0 4px rgba(0,185,150,.16);}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerLibraryName{display:block;font-weight:600;line-height:1.35;word-break:break-word;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerStatus{display:none;color:#6de28d;margin-top:1rem;}',
+                        '#RatingStandardizerConfigPage .ratingStandardizerLibraryStatus{display:none;margin-top:.75rem;color:#d4b106;}'
+                    ].join('');
+
+                    page.appendChild(style);
+                }
+
+                function mappingsEqual(left, right) {
+                    var leftMappings = left || [];
+                    var rightMappings = right || [];
+
+                    if (leftMappings.length !== rightMappings.length) {
+                        return false;
+                    }
+
+                    for (var i = 0; i < leftMappings.length; i++) {
+                        if (leftMappings[i].OriginalRating !== rightMappings[i].OriginalRating || leftMappings[i].TargetRating !== rightMappings[i].TargetRating) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+
+                function inferPresetKey(mappings) {
+                    var presetKeys = Object.keys(RatingStandardizerConfig.presets).filter(function (key) {
+                        return key !== 'blank';
+                    });
+
+                    for (var i = 0; i < presetKeys.length; i++) {
+                        var presetKey = presetKeys[i];
+                        if (mappingsEqual(mappings, RatingStandardizerConfig.presets[presetKey].mappings)) {
+                            return presetKey;
+                        }
+                    }
+
+                    return 'blank';
+                }
+
+                function escapeHtml(value) {
+                    return String(value || '')
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/\"/g, '&quot;')
+                        .replace(/'/g, '&#39;');
+                }
+
+                function normalizeId(value) {
+                    return String(value || '').trim().toLowerCase().replace(/-/g, '');
+                }
+
+                function setLibraryListEnabled(enabled) {
+                    var checkboxes = libraryListContainer.querySelectorAll('.library-check');
+                    for (var i = 0; i < checkboxes.length; i++) {
+                        checkboxes[i].disabled = !enabled;
+                    }
+
+                    libraryListContainer.classList.toggle('is-disabled', !enabled);
+                }
+
+                function updateLibrarySelectionVisibility() {
+                    var isLimitedToSelection = allLibrariesCheckbox.checked;
+                    libraryListContainer.hidden = !isLimitedToSelection;
+                    librarySelectionHint.hidden = isLimitedToSelection;
+                    setLibraryListEnabled(isLimitedToSelection);
+                }
+
+                function syncLibrarySelectionState() {
+                    var items = libraryListContainer.querySelectorAll('.ratingStandardizerLibraryItem');
+                    for (var i = 0; i < items.length; i++) {
+                        var checkbox = items[i].querySelector('.library-check');
+                        items[i].classList.toggle('is-selected', !!(checkbox && checkbox.checked));
+                    }
+                }
+
+                function getLibraryId(folder) {
+                    if (!folder) {
+                        return '';
+                    }
+
+                    return String(folder.ItemId || folder.Id || '').trim();
+                }
+
+                function renderLibraries(folders, selectedIds) {
+                    if (!folders || !folders.length) {
+                        libraryListContainer.innerHTML = '<div class="fieldDescription">No libraries were found.</div>';
+                        return;
+                    }
+
+                    var selectedLookup = {};
+                    (selectedIds || []).forEach(function (id) {
+                        var normalized = normalizeId(id);
+                        if (normalized) {
+                            selectedLookup[normalized] = true;
+                        }
+                    });
+
+                    var html = '';
+                    folders.forEach(function (folder) {
+                        var id = getLibraryId(folder);
+                        var normalizedId = normalizeId(id);
+                        if (!normalizedId) {
+                            return;
+                        }
+
+                        var name = folder.Name || 'Unnamed library';
+                        var checked = selectedLookup[normalizedId] ? ' checked' : '';
+                        html += '<label class="ratingStandardizerLibraryItem">';
+                        html += '<input type="checkbox" class="library-check" value="' + escapeHtml(id) + '"' + checked + ' />';
+                        html += '<span class="ratingStandardizerLibraryContent">';
+                        html += '<span class="ratingStandardizerLibraryCheck"></span>';
+                        html += '<span class="ratingStandardizerLibraryLabel">';
+                        html += '<span class="ratingStandardizerLibraryName">' + escapeHtml(name) + '</span>';
+                        html += '</span>';
+                        html += '</span>';
+                        html += '</label>';
+                    });
+
+                    libraryListContainer.innerHTML = html || '<div class="fieldDescription">No selectable libraries were found.</div>';
+                    syncLibrarySelectionState();
+                }
+
+                function collectTargetLibraryIds() {
+                    if (!allLibrariesCheckbox.checked) {
+                        return [];
+                    }
+
+                    if (!libraryListLoaded) {
+                        return lastSavedTargetLibraryIds.slice();
+                    }
+
+                    return Array.prototype.slice.call(libraryListContainer.querySelectorAll('.library-check:checked'))
+                        .map(function (checkbox) {
+                            return String(checkbox.value || '').trim();
+                        })
+                        .filter(function (id) {
+                            return !!id;
+                        });
+                }
+
+                function loadLibraries(config) {
+                    var selectedIds = Array.isArray(config.TargetLibraryIds) ? config.TargetLibraryIds : [];
+                    lastSavedTargetLibraryIds = selectedIds.slice();
+                    libraryListLoaded = false;
+                    setLibraryStatus('');
+
+                    allLibrariesCheckbox.checked = selectedIds.length > 0;
+                    updateLibrarySelectionVisibility();
+
+                    return ApiClient.getJSON(ApiClient.getUrl('Library/VirtualFolders'))
+                        .then(function (folders) {
+                            renderLibraries(Array.isArray(folders) ? folders : [], selectedIds);
+                            libraryListLoaded = true;
+                            updateLibrarySelectionVisibility();
+                        })
+                        .catch(function (error) {
+                            console.error('Failed to load libraries for Rating Standardizer.', error);
+                            libraryListContainer.innerHTML = '<div class="fieldDescription">Library list is unavailable.</div>';
+                            setLibraryStatus('Could not load libraries. Saving keeps the currently stored library selection.');
+                        });
+                }
+
                 function createCellInput(value, placeholder, className) {
                     var input = document.createElement('input');
                     input.type = 'text';
@@ -327,19 +849,26 @@
                     var targetInput = createCellInput(mapping && mapping.TargetRating, 'PG12', 'mapping-target ratingStandardizerTargetInput');
                     targetCell.appendChild(targetInput);
 
+                    var arrowCell = document.createElement('td');
+                    arrowCell.className = 'ratingStandardizerArrowCell';
+                    arrowCell.innerHTML = '<span class="ratingStandardizerArrowGlyph">→</span>';
+
                     var actionCell = document.createElement('td');
                     actionCell.className = 'ratingStandardizerDeleteCell';
 
                     var deleteButton = document.createElement('button');
                     deleteButton.type = 'button';
-                    deleteButton.className = 'button-flat emby-button ratingStandardizerDeleteButton';
-                    deleteButton.textContent = 'Delete';
+                    deleteButton.className = 'emby-button ratingStandardizerDeleteButton';
+                    deleteButton.setAttribute('title', 'Remove mapping');
+                    deleteButton.setAttribute('aria-label', 'Remove mapping');
+                    deleteButton.innerHTML = '<span>×</span>';
                     deleteButton.addEventListener('click', function () {
                         row.remove();
                     });
                     actionCell.appendChild(deleteButton);
 
                     row.appendChild(originalCell);
+                    row.appendChild(arrowCell);
                     row.appendChild(targetCell);
                     row.appendChild(actionCell);
 
@@ -389,10 +918,30 @@
                     presetDescription.textContent = getSelectedPreset().description;
                 }
 
+                function updateMappingsEditorVisibility() {
+                    var isCustomPreset = presetSelector.value === 'blank';
+                    mappingsEditor.hidden = !isCustomPreset;
+                    mappingEditorHint.hidden = isCustomPreset;
+                    restoreDefaultsButton.hidden = !isCustomPreset;
+                }
+
+                function restoreCustomDefaults() {
+                    renderMappings([]);
+                    setError('');
+                    setStatus('Custom mappings restored to defaults.');
+                }
+
                 function applySelectedPreset() {
                     setError('');
                     setStatus('');
-                    renderMappings(cloneMappings(getSelectedPreset().mappings));
+                    if (presetSelector.value !== 'blank') {
+                        renderMappings(cloneMappings(getSelectedPreset().mappings));
+                        presetSelector.value = 'blank';
+                        setStatus('Preset copied into custom mappings.');
+                    }
+
+                    updatePresetDescription();
+                    updateMappingsEditorVisibility();
                 }
 
                 function runNow() {
@@ -431,16 +980,25 @@
                         });
                 }
 
+                ensureRuntimeStyles();
+
                 page.addEventListener('pageshow', function () {
                     setError('');
                     setStatus('');
+                    setLibraryStatus('');
                     updatePresetDescription();
                     Dashboard.showLoadingMsg();
 
                     ApiClient.getPluginConfiguration(RatingStandardizerConfig.pluginUniqueId)
                         .then(function (config) {
                             document.querySelector('#IsEnabled').checked = !!config.IsEnabled;
+                            presetSelector.value = inferPresetKey(config.Mappings || []);
                             renderMappings(config.Mappings || []);
+                            updatePresetDescription();
+                            updateMappingsEditorVisibility();
+                            return loadLibraries(config);
+                        })
+                        .then(function () {
                             Dashboard.hideLoadingMsg();
                         })
                         .catch(function (error) {
@@ -456,14 +1014,29 @@
 
                 presetSelector.addEventListener('change', function () {
                     updatePresetDescription();
+                    updateMappingsEditorVisibility();
                 });
 
                 applyPresetButton.addEventListener('click', function () {
                     applySelectedPreset();
                 });
 
+                restoreDefaultsButton.addEventListener('click', function () {
+                    restoreCustomDefaults();
+                });
+
                 runNowButton.addEventListener('click', function () {
                     runNow();
+                });
+
+                allLibrariesCheckbox.addEventListener('change', function () {
+                    updateLibrarySelectionVisibility();
+                });
+
+                libraryListContainer.addEventListener('change', function (event) {
+                    if (event.target && event.target.classList.contains('library-check')) {
+                        syncLibrarySelectionState();
+                    }
                 });
 
                 form.addEventListener('submit', function (event) {
@@ -475,7 +1048,10 @@
                     ApiClient.getPluginConfiguration(RatingStandardizerConfig.pluginUniqueId)
                         .then(function (config) {
                             config.IsEnabled = document.querySelector('#IsEnabled').checked;
-                            config.Mappings = collectMappings();
+                            config.Mappings = presetSelector.value === 'blank'
+                                ? collectMappings()
+                                : cloneMappings(getSelectedPreset().mappings);
+                            config.TargetLibraryIds = collectTargetLibraryIds();
 
                             return ApiClient.updatePluginConfiguration(RatingStandardizerConfig.pluginUniqueId, config);
                         })

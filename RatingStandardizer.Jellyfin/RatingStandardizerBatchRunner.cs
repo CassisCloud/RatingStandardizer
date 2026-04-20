@@ -58,6 +58,12 @@ internal static class RatingStandardizerBatchRunner
                 .Where(static item => item is Video or MediaBrowser.Controller.Entities.TV.Series)
                 .ToList();
 
+            var targetLookup = LibraryFilter.CreateTargetLookup(configuration.TargetLibraryIds);
+            if (targetLookup is not null)
+            {
+                items = items.Where(item => LibraryFilter.IsMatch(item, targetLookup)).ToList();
+            }
+
             var totalCount = items.Count;
             var updatedCount = 0;
             var matchedCount = 0;
