@@ -39,3 +39,8 @@ Jellyfin内のメディア（映画、番組）の `OfficialRating` を、ユー
 # Rules
 - 依存関係の注入 (DI) を正しく使用し、`ILogger<T>` で適切なログを出力すること。
 - プラグインのGUIDは一意なものを生成して使用すること。
+
+## 6. 設定ページのサイドバー表示
+- `PluginPageInfo` の `EnableInMainMenu = true` を設定し、Jellyfin の Dashboard サイドバーに表示すること。
+- `DisplayName` を設定し、ユーザーに分かりやすい名前で表示すること。
+- 外部 Plugin Pages プラグインや手動 `config.json` は不要。
