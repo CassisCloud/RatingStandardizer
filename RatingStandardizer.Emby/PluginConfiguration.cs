@@ -17,7 +17,7 @@ public sealed class PluginConfiguration : BasePluginConfiguration, IRatingStanda
     /// <summary>
     /// Gets or sets the configured rating mappings.
     /// </summary>
-    public List<RatingMapping> Mappings { get; set; } = RatingPresets.CreateJapanMappings();
+    public List<RatingMapping> Mappings { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the target virtual folder identifiers.

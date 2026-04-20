@@ -289,7 +289,7 @@ define(['baseView', 'loading', 'emby-input', 'emby-button', 'emby-select', 'emby
     }
 
     function restoreCustomDefaults(page) {
-        renderMappings(page, []);
+        renderMappings(page, cloneMappings(page._initialCustomMappings || []));
         setError(page, '');
         setStatus(page, 'Custom mappings restored to defaults.');
     }
@@ -452,6 +452,7 @@ define(['baseView', 'loading', 'emby-input', 'emby-button', 'emby-select', 'emby
     }
 
     function loadPage(page, config) {
+        page._initialCustomMappings = cloneMappings(config.Mappings || []);
         page.querySelector('.chkIsEnabled').checked = !!config.IsEnabled;
         page.querySelector('.selectPreset').value = inferPresetKey(config.Mappings || []);
         renderMappings(page, config.Mappings || []);

@@ -43,7 +43,7 @@ public sealed class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
         [
             new PluginPageInfo
             {
-                Name = "ratingstandardizer-v5",
+                Name = "ratingstandardizer-v6",
                 DisplayName = Name,
                 EmbeddedResourcePath = type.Namespace + ".Configuration.configPage.html",
                 EnableInMainMenu = true,
@@ -52,7 +52,7 @@ public sealed class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
             },
             new PluginPageInfo
             {
-                Name = "ratingstandardizerjs-v5",
+                Name = "ratingstandardizerjs-v6",
                 EmbeddedResourcePath = type.Namespace + ".Configuration.configPage.js"
             }
         ];

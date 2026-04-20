@@ -1,33 +1,46 @@
 # Rating Standardizer
 
-Jellyfin プラグイン：メディアのレーティングを設定したマッピングに基づいて自動変換します。
+[日本語版はこちら](README.ja.md)
 
-## 機能
+Rating Standardizer is a Jellyfin / Emby plugin that normalizes media ratings based on configurable mapping rules.
 
-- メディア追加/更新時の自動レーティング変換
-- バッチ処理による一括変換（スケジュールタスク）
-- プリセット対応（日本・米国・オーストラリア・ヨーロッパ）
-- カスタムマッピング対応
+## Features
 
-## インストール
+- Automatically standardizes ratings when items are added or updated
+- Supports batch processing through a scheduled task
+- Includes built-in presets for Japan, United States, Europe, and Australia
+- Supports fully custom mappings
+- Can be limited to selected libraries only
 
-1. リリースページから DLL をダウンロード
-2. `Jellyfin/Plugins` フォルダに配置
-3. Jellyfin を再起動
-4. ダッシュボード → プラグイン → Rating Standardizer で設定
+## Default Settings
 
-## サイドバー表示
+- Plugin state: enabled
+- Scheduled task: every Monday at 03:00 (server local time)
+- Target Libraries: off
+- Preset: Custom
 
-本プラグインは Jellyfin 標準の `EnableInMainMenu` を使って、設定画面（Dashboard）のサイドバーに表示されます。
+## Installation
 
-- 追加プラグインは不要です
-- 表示位置: **Dashboard > Rating Standardizer**
-- メニューに表示されない場合は Jellyfin を再起動してください
+1. Download the plugin DLL from the release page.
+2. Place it in your `Jellyfin/Plugins` or Emby plugin folder.
+3. Restart the server.
+4. Open `Dashboard > Plugins > Rating Standardizer`.
 
-## ビルド
+## Sidebar Menu
+
+The plugin uses the standard Jellyfin / Emby plugin configuration entry to appear in the dashboard sidebar.
+
+- No extra plugin is required
+- Location: `Dashboard > Rating Standardizer`
+- If the menu does not appear, restart the server
+
+## Build
 
 ```bash
-dotnet build RatingStandardizer.Jellyfin
+dotnet build RatingStandardizer.sln
 ```
 
-出力: `bin/Debug/net9.0/Jellyfin.Plugin.RatingStandardizer.dll`
+Example output:
+
+- Jellyfin: `RatingStandardizer.Jellyfin/bin/Debug/net9.0/Jellyfin.Plugin.RatingStandardizer.dll`
+- Emby: `RatingStandardizer.Emby/bin/Debug/net8.0/Emby.Plugin.RatingStandardizer.dll`

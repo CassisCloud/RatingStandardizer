@@ -48,7 +48,15 @@ public sealed class RatingStandardizerTask : IScheduledTask
     /// <inheritdoc />
     public IEnumerable<TaskTriggerInfo> GetDefaultTriggers()
     {
-        return Array.Empty<TaskTriggerInfo>();
+        return
+        [
+            new TaskTriggerInfo
+            {
+                Type = TaskTriggerInfoType.WeeklyTrigger,
+                DayOfWeek = DayOfWeek.Monday,
+                TimeOfDayTicks = TimeSpan.FromHours(3).Ticks
+            }
+        ];
     }
 
     /// <inheritdoc />

@@ -34,7 +34,15 @@ public sealed class RatingStandardizerTask : IScheduledTask
 
     public IEnumerable<TaskTriggerInfo> GetDefaultTriggers()
     {
-        return Array.Empty<TaskTriggerInfo>();
+        return
+        [
+            new TaskTriggerInfo
+            {
+                Type = "WeeklyTrigger",
+                DayOfWeek = DayOfWeek.Monday,
+                TimeOfDayTicks = TimeSpan.FromHours(3).Ticks
+            }
+        ];
     }
 
     public Task Execute(CancellationToken cancellationToken, IProgress<double> progress)
