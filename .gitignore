@@ -1,0 +1,59 @@
+# .NET
+bin/
+obj/
+*.dll
+*.pdb
+*.exe
+*.cache
+*.log
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# NuGet
+*.nupkg
+packages/
+project.nuget.cache
+project.assets.json
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+artifacts/
+
+# Visual Studio
+.vs/
+*.vspscc
+*.vssscc
+._*
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# VS Code
+.vscode/
+
+# Rider
+.idea/
+
+# NuGet
+*.nuget.props
+*.nuget.targets
+
+# Playwright
+.playwright-mcp/
+playwright-report/
+test-results/

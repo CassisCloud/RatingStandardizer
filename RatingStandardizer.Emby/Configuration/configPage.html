@@ -1,0 +1,165 @@
+<div is="emby-scroller" class="view flex flex-direction-column scrollFrameY flex-grow pluginConfigurationPage" data-horizontal="false" data-forcescrollbar="true" data-centerfocus="true" data-bindheader="true" data-controller="__plugin/ratingstandardizerjs-v2" data-title="Rating Standardizer">
+    <div class="scrollSlider flex-grow flex-direction-column padded-left padded-left-page padded-right padded-top-page padded-bottom-page">
+        <style>
+            .ratingStandardizerPage .ratingStandardizerToolbar {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75em;
+                align-items: flex-end;
+                margin-top: 1em;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerPresetWrapper {
+                display: flex;
+                min-width: 16rem;
+                max-width: 22rem;
+                flex: 1 1 18rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerMappingsWrap {
+                overflow-x: auto;
+                margin-top: 1em;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerMappingsTable {
+                width: auto;
+                min-width: 32rem;
+                max-width: 44rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerMappingsTable th,
+            .ratingStandardizerPage .ratingStandardizerMappingsTable td {
+                padding: 0.45em 0.5em;
+                text-align: left;
+                vertical-align: middle;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerMappingsTable th {
+                white-space: nowrap;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerMappingsTable input {
+                margin: 0;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerOriginalInput {
+                width: 11rem;
+                max-width: 100%;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerTargetInput {
+                width: 8rem;
+                max-width: 100%;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerDeleteCell {
+                width: 1%;
+                white-space: nowrap;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerDeleteButton {
+                min-width: auto;
+                padding: 0.35em 0.75em;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerActions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75em;
+                margin-top: 1em;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerError {
+                display: none;
+                color: #ff6b6b;
+                margin-top: 1em;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerStatus {
+                display: none;
+                color: #52b54b;
+                margin-top: 1em;
+            }
+
+            @media (max-width: 600px) {
+                .ratingStandardizerPage .ratingStandardizerMappingsTable {
+                    min-width: 26rem;
+                }
+
+                .ratingStandardizerPage .ratingStandardizerOriginalInput {
+                    width: 8.5rem;
+                }
+
+                .ratingStandardizerPage .ratingStandardizerTargetInput {
+                    width: 6.5rem;
+                }
+            }
+        </style>
+
+        <form class="ratingStandardizerForm auto-center ratingStandardizerPage">
+            <div class="verticalSection">
+                <div class="sectionTitleContainer">
+                    <h2 class="sectionTitle">Rating Standardizer</h2>
+                </div>
+                <div class="fieldDescription">OfficialRating を標準化し、対象フィールドをロックします。</div>
+            </div>
+
+            <div class="checkboxContainer checkboxContainer-withDescription">
+                <label>
+                    <input type="checkbox" is="emby-checkbox" class="chkIsEnabled" />
+                    <span>Enable plugin</span>
+                </label>
+                <div class="fieldDescription checkboxFieldDescription">有効な場合、アイテム追加・更新時にレーティング変換を適用します。</div>
+            </div>
+
+            <div class="verticalSection">
+                <div class="sectionTitleContainer">
+                    <h3 class="sectionTitle">Rating Mappings</h3>
+                </div>
+                <div class="fieldDescription">プリセットを適用したあと、必要に応じて個別のマッピングを編集してください。</div>
+                <div class="ratingStandardizerError"></div>
+                <div class="ratingStandardizerStatus"></div>
+            </div>
+
+            <div class="ratingStandardizerToolbar">
+<div class="ratingStandardizerPresetWrapper">
+                <select is="emby-select" class="selectPreset" label="Preset">
+                    <option value="japan">Japan</option>
+                    <option value="unitedStates">United States</option>
+                    <option value="europe">Europe (6/12/16/18)</option>
+                    <option value="australia">Australia</option>
+                    <option value="blank">Blank / Custom</option>
+                </select>
+            </div>
+                <button is="emby-button" type="button" class="button-flat btnApplyPreset"><span>Apply preset</span></button>
+            </div>
+
+            <div class="fieldDescription ratingStandardizerPresetDescription" style="margin-top:0.5em;"></div>
+
+            <div class="ratingStandardizerMappingsWrap">
+                <table class="tblForm ratingStandardizerMappingsTable">
+                    <thead>
+                        <tr>
+                            <th>Original</th>
+                            <th>Target</th>
+                            <th class="ratingStandardizerDeleteCell"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="mappingRows"></tbody>
+                </table>
+            </div>
+
+            <div class="ratingStandardizerActions">
+                <button is="emby-button" type="button" class="button-flat btnAddMapping"><span>Add mapping</span></button>
+            </div>
+
+            <div style="margin-top:2em;">
+                <button is="emby-button" type="submit" class="raised button-submit block"><span>Save</span></button>
+            </div>
+
+            <div style="margin-top:1em;">
+                <button is="emby-button" type="button" class="button-flat btnRunNow block"><span>Run Now</span></button>
+            </div>
+        </form>
+    </div>
+</div>

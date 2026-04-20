@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Rating Standardizer</title>
+    <style>
+        .ratingStandardizerToolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75em;
+            align-items: flex-end;
+            margin-top: 1em;
+        }
+
+        .ratingStandardizerPresetContainer {
+            min-width: 16rem;
+            max-width: 22rem;
+            flex: 1 1 18rem;
+        }
+
+        .ratingStandardizerMappingsWrap {
+            overflow-x: auto;
+            margin-top: 1em;
+        }
+
+        .ratingStandardizerMappingsTable {
+            width: auto;
+            min-width: 32rem;
+            max-width: 44rem;
+        }
+
+        .ratingStandardizerMappingsTable th,
+        .ratingStandardizerMappingsTable td {
+            padding: 0.45em 0.5em;
+            vertical-align: middle;
+        }
+
+        .ratingStandardizerMappingsTable th {
+            white-space: nowrap;
+        }
+
+        .ratingStandardizerMappingsTable input {
+            margin: 0;
+        }
+
+        .ratingStandardizerOriginalInput {
+            width: 11rem;
+            max-width: 100%;
+        }
+
+        .ratingStandardizerTargetInput {
+            width: 8rem;
+            max-width: 100%;
+        }
+
+        .ratingStandardizerDeleteCell {
+            width: 1%;
+            white-space: nowrap;
+        }
+
+        .ratingStandardizerDeleteButton {
+            min-width: auto;
+            padding: 0.35em 0.75em;
+        }
+
+        .ratingStandardizerActions {
+            display: flex;
+            gap: 0.75em;
+            flex-wrap: wrap;
+            margin-top: 1em;
+        }
+
+        .ratingStandardizerStatus {
+            display: none;
+            color: #52b54b;
+            margin-top: 1em;
+        }
+
+        @media (max-width: 600px) {
+            .ratingStandardizerMappingsTable {
+                min-width: 26rem;
+            }
+
+            .ratingStandardizerOriginalInput {
+                width: 8.5rem;
+            }
+
+            .ratingStandardizerTargetInput {
+                width: 6.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="RatingStandardizerConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-checkbox,emby-select">
+        <div data-role="content">
+            <div class="content-primary">
+                <form id="RatingStandardizerConfigForm">
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="IsEnabled" type="checkbox" is="emby-checkbox" />
+                            <span>Enable plugin</span>
+                        </label>
+                        <div class="fieldDescription">When enabled, ratings are standardized on item add/update events and via the scheduled task.</div>
+                    </div>
+
+                    <div class="sectionTitleContainer">
+                        <h2 class="sectionTitle">Rating Mappings</h2>
+                    </div>
+
+                    <div class="fieldDescription">Choose a preset to target a regional rating system, then fine-tune the mappings if needed.</div>
+                    <div id="ConfigErrorMessage" class="fieldDescription" style="display:none; color:#ff6b6b; margin-top:1em;"></div>
+                    <div id="ConfigStatusMessage" class="fieldDescription ratingStandardizerStatus"></div>
+
+                    <div class="ratingStandardizerToolbar">
+                        <div class="selectContainer ratingStandardizerPresetContainer">
+                            <label class="selectLabel" for="PresetSelector">Preset</label>
+                            <select is="emby-select" id="PresetSelector" class="emby-select-withcolor emby-select">
+                                <option value="japan">Japan</option>
+                                <option value="unitedStates">United States</option>
+                                <option value="europe">Europe (6/12/16/18)</option>
+                                <option value="australia">Australia</option>
+                                <option value="blank">Blank / Custom</option>
+                            </select>
+                        </div>
+                        <button is="emby-button" id="ApplyPresetButton" type="button" class="button-flat emby-button">
+                            <span>Apply preset</span>
+                        </button>
+                    </div>
+
+                    <div id="PresetDescription" class="fieldDescription" style="margin-top:0.5em;"></div>
+
+                    <div class="ratingStandardizerMappingsWrap">
+                        <table class="tblForm ratingStandardizerMappingsTable">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:left;">Original</th>
+                                    <th style="text-align:left;">Target</th>
+                                    <th class="ratingStandardizerDeleteCell"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="MappingsTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="ratingStandardizerActions">
+                        <button is="emby-button" id="AddMappingButton" type="button" class="button-flat emby-button">
+                            <span>Add mapping</span>
+                        </button>
+                    </div>
+
+                    <div style="margin-top:2em;">
+                        <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+                            <span>Save</span>
+                        </button>
+                    </div>
+
+                    <div style="margin-top:1em;">
+                        <button is="emby-button" id="RunNowButton" type="button" class="button-flat block emby-button">
+                            <span>Run Now</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            var RatingStandardizerConfig = {
+                pluginUniqueId: 'f170154e-02fd-4f37-a008-70811ca49120',
+                presets: {
+                    japan: {
+                        description: 'Map common international ratings into G, PG12, R15+, R18+, and NR.',
+                        mappings: [
+                            { OriginalRating: '6', TargetRating: 'G' },
+                            { OriginalRating: '6+', TargetRating: 'G' },
+                            { OriginalRating: 'G', TargetRating: 'G' },
+                            { OriginalRating: 'PG', TargetRating: 'PG12' },
+                            { OriginalRating: 'PG-13', TargetRating: 'PG12' },
+                            { OriginalRating: '14', TargetRating: 'PG12' },
+                            { OriginalRating: 'TV-14', TargetRating: 'PG12' },
+                            { OriginalRating: 'R', TargetRating: 'R15+' },
+                            { OriginalRating: '15', TargetRating: 'R15+' },
+                            { OriginalRating: '16', TargetRating: 'R15+' },
+                            { OriginalRating: 'M', TargetRating: 'R15+' },
+                            { OriginalRating: 'MA15+', TargetRating: 'R15+' },
+                            { OriginalRating: 'NC-17', TargetRating: 'R18+' },
+                            { OriginalRating: 'PL-18', TargetRating: 'R18+' },
+                            { OriginalRating: 'Unrated', TargetRating: 'NR' },
+                            { OriginalRating: 'Not Rated', TargetRating: 'NR' },
+                            { OriginalRating: 'NR', TargetRating: 'NR' }
+                        ]
+                    },
+                    unitedStates: {
+                        description: 'Standardize ratings into G, PG, PG-13, R, NC-17, and NR.',
+                        mappings: [
+                            { OriginalRating: 'G', TargetRating: 'G' },
+                            { OriginalRating: '6', TargetRating: 'PG' },
+                            { OriginalRating: '6+', TargetRating: 'PG' },
+                            { OriginalRating: 'PG', TargetRating: 'PG' },
+                            { OriginalRating: '12', TargetRating: 'PG-13' },
+                            { OriginalRating: '12A', TargetRating: 'PG-13' },
+                            { OriginalRating: 'PG-13', TargetRating: 'PG-13' },
+                            { OriginalRating: '14', TargetRating: 'PG-13' },
+                            { OriginalRating: 'TV-14', TargetRating: 'PG-13' },
+                            { OriginalRating: 'R', TargetRating: 'R' },
+                            { OriginalRating: '15', TargetRating: 'R' },
+                            { OriginalRating: '16', TargetRating: 'R' },
+                            { OriginalRating: 'M', TargetRating: 'R' },
+                            { OriginalRating: 'MA15+', TargetRating: 'R' },
+                            { OriginalRating: '18', TargetRating: 'NC-17' },
+                            { OriginalRating: 'NC-17', TargetRating: 'NC-17' },
+                            { OriginalRating: 'PL-18', TargetRating: 'NC-17' },
+                            { OriginalRating: 'Unrated', TargetRating: 'NR' },
+                            { OriginalRating: 'Not Rated', TargetRating: 'NR' },
+                            { OriginalRating: 'NR', TargetRating: 'NR' }
+                        ]
+                    },
+                    europe: {
+                        description: 'Normalize ratings into G, 6, 12, 16, 18, and NR using a simple Europe-friendly age scale.',
+                        mappings: [
+                            { OriginalRating: 'G', TargetRating: 'G' },
+                            { OriginalRating: '6', TargetRating: '6' },
+                            { OriginalRating: '6+', TargetRating: '6' },
+                            { OriginalRating: 'PG', TargetRating: '6' },
+                            { OriginalRating: '12', TargetRating: '12' },
+                            { OriginalRating: '12A', TargetRating: '12' },
+                            { OriginalRating: 'PG-13', TargetRating: '12' },
+                            { OriginalRating: '14', TargetRating: '12' },
+                            { OriginalRating: 'TV-14', TargetRating: '12' },
+                            { OriginalRating: '15', TargetRating: '16' },
+                            { OriginalRating: '16', TargetRating: '16' },
+                            { OriginalRating: 'M', TargetRating: '16' },
+                            { OriginalRating: 'R', TargetRating: '16' },
+                            { OriginalRating: 'MA15+', TargetRating: '16' },
+                            { OriginalRating: '18', TargetRating: '18' },
+                            { OriginalRating: 'NC-17', TargetRating: '18' },
+                            { OriginalRating: 'PL-18', TargetRating: '18' },
+                            { OriginalRating: 'Unrated', TargetRating: 'NR' },
+                            { OriginalRating: 'Not Rated', TargetRating: 'NR' },
+                            { OriginalRating: 'NR', TargetRating: 'NR' }
+                        ]
+                    },
+                    australia: {
+                        description: 'Map ratings into G, PG, M, MA15+, R18+, and NR for an Australian-style scale.',
+                        mappings: [
+                            { OriginalRating: 'G', TargetRating: 'G' },
+                            { OriginalRating: '6', TargetRating: 'PG' },
+                            { OriginalRating: '6+', TargetRating: 'PG' },
+                            { OriginalRating: 'PG', TargetRating: 'PG' },
+                            { OriginalRating: '12', TargetRating: 'M' },
+                            { OriginalRating: '12A', TargetRating: 'M' },
+                            { OriginalRating: 'PG-13', TargetRating: 'M' },
+                            { OriginalRating: '14', TargetRating: 'M' },
+                            { OriginalRating: 'TV-14', TargetRating: 'M' },
+                            { OriginalRating: 'M', TargetRating: 'M' },
+                            { OriginalRating: '15', TargetRating: 'MA15+' },
+                            { OriginalRating: '16', TargetRating: 'MA15+' },
+                            { OriginalRating: 'R', TargetRating: 'MA15+' },
+                            { OriginalRating: 'MA15+', TargetRating: 'MA15+' },
+                            { OriginalRating: '18', TargetRating: 'R18+' },
+                            { OriginalRating: 'NC-17', TargetRating: 'R18+' },
+                            { OriginalRating: 'PL-18', TargetRating: 'R18+' },
+                            { OriginalRating: 'Unrated', TargetRating: 'NR' },
+                            { OriginalRating: 'Not Rated', TargetRating: 'NR' },
+                            { OriginalRating: 'NR', TargetRating: 'NR' }
+                        ]
+                    },
+                    blank: {
+                        description: 'Start with an empty table and define your own rating conversions.',
+                        mappings: []
+                    }
+                }
+            };
+
+            (function () {
+                var page = document.querySelector('#RatingStandardizerConfigPage');
+                var form = document.querySelector('#RatingStandardizerConfigForm');
+                var mappingsTableBody = document.querySelector('#MappingsTableBody');
+                var addMappingButton = document.querySelector('#AddMappingButton');
+                var presetSelector = document.querySelector('#PresetSelector');
+                var applyPresetButton = document.querySelector('#ApplyPresetButton');
+                var runNowButton = document.querySelector('#RunNowButton');
+                var presetDescription = document.querySelector('#PresetDescription');
+                var errorMessage = document.querySelector('#ConfigErrorMessage');
+                var statusMessage = document.querySelector('#ConfigStatusMessage');
+
+                function setError(message) {
+                    if (!message) {
+                        errorMessage.textContent = '';
+                        errorMessage.style.display = 'none';
+                        return;
+                    }
+
+                    errorMessage.textContent = message;
+                    errorMessage.style.display = 'block';
+                }
+
+                function setStatus(message) {
+                    if (!message) {
+                        statusMessage.textContent = '';
+                        statusMessage.style.display = 'none';
+                        return;
+                    }
+
+                    statusMessage.textContent = message;
+                    statusMessage.style.display = 'block';
+                }
+
+                function createCellInput(value, placeholder, className) {
+                    var input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'emby-input ' + className;
+                    input.value = value || '';
+                    input.placeholder = placeholder;
+                    input.spellcheck = false;
+                    return input;
+                }
+
+                function createRow(mapping) {
+                    var row = document.createElement('tr');
+
+                    var originalCell = document.createElement('td');
+                    var originalInput = createCellInput(mapping && mapping.OriginalRating, 'TV-14', 'mapping-original ratingStandardizerOriginalInput');
+                    originalCell.appendChild(originalInput);
+
+                    var targetCell = document.createElement('td');
+                    var targetInput = createCellInput(mapping && mapping.TargetRating, 'PG12', 'mapping-target ratingStandardizerTargetInput');
+                    targetCell.appendChild(targetInput);
+
+                    var actionCell = document.createElement('td');
+                    actionCell.className = 'ratingStandardizerDeleteCell';
+
+                    var deleteButton = document.createElement('button');
+                    deleteButton.type = 'button';
+                    deleteButton.className = 'button-flat emby-button ratingStandardizerDeleteButton';
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.addEventListener('click', function () {
+                        row.remove();
+                    });
+                    actionCell.appendChild(deleteButton);
+
+                    row.appendChild(originalCell);
+                    row.appendChild(targetCell);
+                    row.appendChild(actionCell);
+
+                    return row;
+                }
+
+                function renderMappings(mappings) {
+                    mappingsTableBody.innerHTML = '';
+
+                    if (!mappings || !mappings.length) {
+                        mappingsTableBody.appendChild(createRow({ OriginalRating: '', TargetRating: '' }));
+                        return;
+                    }
+
+                    mappings.forEach(function (mapping) {
+                        mappingsTableBody.appendChild(createRow(mapping));
+                    });
+                }
+
+                function cloneMappings(mappings) {
+                    return (mappings || []).map(function (mapping) {
+                        return {
+                            OriginalRating: mapping.OriginalRating,
+                            TargetRating: mapping.TargetRating
+                        };
+                    });
+                }
+
+                function collectMappings() {
+                    return Array.prototype.slice.call(mappingsTableBody.querySelectorAll('tr'))
+                        .map(function (row) {
+                            return {
+                                OriginalRating: row.querySelector('.mapping-original').value.trim(),
+                                TargetRating: row.querySelector('.mapping-target').value.trim()
+                            };
+                        })
+                        .filter(function (mapping) {
+                            return mapping.OriginalRating && mapping.TargetRating;
+                        });
+                }
+
+                function getSelectedPreset() {
+                    return RatingStandardizerConfig.presets[presetSelector.value] || RatingStandardizerConfig.presets.japan;
+                }
+
+                function updatePresetDescription() {
+                    presetDescription.textContent = getSelectedPreset().description;
+                }
+
+                function applySelectedPreset() {
+                    setError('');
+                    setStatus('');
+                    renderMappings(cloneMappings(getSelectedPreset().mappings));
+                }
+
+                function runNow() {
+                    setError('');
+                    setStatus('');
+                    Dashboard.showLoadingMsg();
+
+                    ApiClient.ajax({
+                        type: 'GET',
+                        url: ApiClient.getUrl('ScheduledTasks'),
+                        dataType: 'json'
+                    })
+                        .then(function (tasks) {
+                            var task = (tasks || []).filter(function (entry) {
+                                return entry && entry.Key === 'RatingStandardizerBatchTask';
+                            })[0];
+
+                            if (!task || !task.Id) {
+                                throw new Error('Rating Standardizer task was not found.');
+                            }
+
+                            return ApiClient.ajax({
+                                type: 'POST',
+                                url: ApiClient.getUrl('ScheduledTasks/Running/' + encodeURIComponent(task.Id))
+                            });
+                        })
+                        .then(function () {
+                            setStatus('Run started. Progress is available from Scheduled Tasks.');
+                        })
+                        .catch(function (error) {
+                            console.error('Failed to run Rating Standardizer.', error);
+                            setError('Failed to run now. Check browser console and Jellyfin logs.');
+                        })
+                        .then(function () {
+                            Dashboard.hideLoadingMsg();
+                        });
+                }
+
+                page.addEventListener('pageshow', function () {
+                    setError('');
+                    setStatus('');
+                    updatePresetDescription();
+                    Dashboard.showLoadingMsg();
+
+                    ApiClient.getPluginConfiguration(RatingStandardizerConfig.pluginUniqueId)
+                        .then(function (config) {
+                            document.querySelector('#IsEnabled').checked = !!config.IsEnabled;
+                            renderMappings(config.Mappings || []);
+                            Dashboard.hideLoadingMsg();
+                        })
+                        .catch(function (error) {
+                            console.error('Failed to load Rating Standardizer configuration.', error);
+                            setError('Failed to load plugin configuration. Check browser console and Jellyfin logs.');
+                            Dashboard.hideLoadingMsg();
+                        });
+                });
+
+                addMappingButton.addEventListener('click', function () {
+                    mappingsTableBody.appendChild(createRow({ OriginalRating: '', TargetRating: '' }));
+                });
+
+                presetSelector.addEventListener('change', function () {
+                    updatePresetDescription();
+                });
+
+                applyPresetButton.addEventListener('click', function () {
+                    applySelectedPreset();
+                });
+
+                runNowButton.addEventListener('click', function () {
+                    runNow();
+                });
+
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    setError('');
+                    setStatus('');
+                    Dashboard.showLoadingMsg();
+
+                    ApiClient.getPluginConfiguration(RatingStandardizerConfig.pluginUniqueId)
+                        .then(function (config) {
+                            config.IsEnabled = document.querySelector('#IsEnabled').checked;
+                            config.Mappings = collectMappings();
+
+                            return ApiClient.updatePluginConfiguration(RatingStandardizerConfig.pluginUniqueId, config);
+                        })
+                        .then(function (result) {
+                            Dashboard.processPluginConfigurationUpdateResult(result);
+                            Dashboard.hideLoadingMsg();
+                        })
+                        .catch(function (error) {
+                            console.error('Failed to save Rating Standardizer configuration.', error);
+                            setError('Failed to save plugin configuration. Check browser console and Jellyfin logs.');
+                            Dashboard.hideLoadingMsg();
+                        });
+
+                    return false;
+                });
+            })();
+        </script>
+    </div>
+</body>
+</html>
