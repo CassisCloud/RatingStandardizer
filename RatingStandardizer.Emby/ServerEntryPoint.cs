@@ -76,6 +76,12 @@ public sealed class ServerEntryPoint : IServerEntryPoint, IDisposable
                 return;
             }
 
+            var targetLookup = LibraryFilter.CreateTargetLookup(configuration.TargetLibraryIds);
+            if (!LibraryFilter.IsMatch(e.Item, targetLookup))
+            {
+                return;
+            }
+
             var result = ItemRatingStandardizer.Apply(e.Item, configuration.Mappings, _ratingConverter);
             if (!result.MatchedMapping)
             {

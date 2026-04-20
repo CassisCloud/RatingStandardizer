@@ -19,5 +19,11 @@ public sealed class PluginConfiguration : BasePluginConfiguration, IRatingStanda
     /// </summary>
     public List<RatingMapping> Mappings { get; set; } = RatingPresets.CreateJapanMappings();
 
+    /// <summary>
+    /// Gets or sets the target virtual folder identifiers.
+    /// Empty means all libraries are targeted.
+    /// </summary>
+    public List<string> TargetLibraryIds { get; set; } = [];
+
     IReadOnlyList<RatingMapping> IRatingStandardizerConfiguration.Mappings => Mappings;
 }
