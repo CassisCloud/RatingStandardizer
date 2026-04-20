@@ -17,7 +17,8 @@ param(
         'run-emby',
         'stop-emby',
         'restart-emby',
-        'open-emby-log')]
+        'open-emby-log',
+        'launch-all')]
     [string]$Action,
 
     [string]$JellyfinVersion,
@@ -589,5 +590,10 @@ switch ($Action) {
 
     'open-emby-log' {
         Open-LatestLog -Server 'Emby'
+    }
+
+    'launch-all' {
+        Restart-Server -Server 'Jellyfin' -PackageVersion (Get-PackageVersion -Server 'Jellyfin')
+        Restart-Server -Server 'Emby' -PackageVersion (Get-PackageVersion -Server 'Emby')
     }
 }
