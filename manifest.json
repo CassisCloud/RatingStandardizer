@@ -1,21 +1,19 @@
-[
-  {
-    "guid": "f170154e-02fd-4f37-a008-70811ca49120",
-    "name": "Rating Standardizer",
-    "overview": "Normalize official ratings across your library.",
-    "description": "Automatically standardizes official ratings for movies and series using configurable mappings. Supports library update events and scheduled batch processing.",
-    "owner": "CassisCloud",
-    "category": "Metadata",
-    "imageUrl": "https://raw.githubusercontent.com/CassisCloud/rating-standardizer/main/assets/banner-pop.png",
-    "versions": [
-      {
-        "version": "1.0.0.0",
-        "changelog": "Initial public release.",
-        "targetAbi": "10.11.0.0",
-        "sourceUrl": "https://github.com/CassisCloud/rating-standardizer/releases/download/v1.0.0/rating-standardizer-jellyfin_1.0.0.0.zip",
-        "checksum": "TO_BE_FILLED_BY_RELEASE_WORKFLOW",
-        "timestamp": "TO_BE_FILLED_BY_RELEASE_WORKFLOW"
-      }
-    ]
-  }
-]
+{
+  "guid": "f170154e-02fd-4f37-a008-70811ca49120",
+  "name": "Rating Standardizer",
+  "overview": "Normalize official ratings across your library.",
+  "description": "Automatically standardizes official ratings for movies and series using configurable mappings. Supports library update events and scheduled batch processing.",
+  "owner": "CassisCloud",
+  "category": "Metadata",
+  "imageUrl": "https://raw.githubusercontent.com/CassisCloud/rating-standardizer/main/assets/banner-pop.png",
+  "versions": [
+    {
+      "version": "1.0.0.0",
+      "changelog": "- feat: add plugin release metadata and artwork (a798871)- feat: refine ratings plugin defaults and docs (1b46d8e)- feat: add launch-all action to build and start Jellyfin & Emby together (a2b3bbb)- feat(jellyfin): update Jellyfin plugin configuration and core wiring (6c56160)- feat(emby): update Emby plugin configuration and core wiring (6cef93b)- feat: add LibraryFilter scaffolds for Emby and Jellyfin (300fa3a)- Add sidebar display for settings page and clean up Plugin.cs (3a0ee63)- Add scheduled task support for batch rating conversion (9a022dd)- first commit (ef8c4e2)",
+      "targetAbi": "10.11.0.0",
+      "sourceUrl": "https://github.com/CassisCloud/rating-standardizer/releases/download/v1.0.0/rating-standardizer-jellyfin_1.0.0.0.zip",
+      "checksum": "d75c35147866c96c0226db0150d90aa4",
+      "timestamp": "2026-04-21T11:00:53Z"
+    }
+  ]
+}
