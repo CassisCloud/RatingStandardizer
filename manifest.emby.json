@@ -1,25 +1,24 @@
-{
-  "id": "rating-standardizer",
-  "guid": "e2688ed7-4bb2-4bba-9e0d-6ccfd1f2d8f3",
-  "name": "Rating Standardizer",
-  "overview": "Normalize official ratings across your library.",
-  "shortDescription": "Automatically standardizes official ratings for movies and series using configurable mappings.",
-  "description": "Automatically standardizes official ratings for movies and series using configurable mappings. Supports library update events and scheduled batch processing.",
-  "owner": "CassisCloud",
-  "category": "Metadata",
-  "type": "plugin",
-  "targetSystem": "Server",
-  "enableInAppStore": true,
-  "thumbImage": "https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/assets/icon-pop.png",
-  "previewImage": "https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/assets/banner-pop.png",
-  "versions": [
-    {
-      "version": "1.0.0.0",
-      "changelog": "- docs: add installation instructions (810ab09)- feat: add release metadata and artwork (3829bda)- feat: add Jellyfin and Emby plugin projects (f687952)- Initial commit (aedd52a)",
-      "sourceUrl": "https://github.com/CassisCloud/RatingStandardizer/releases/download/v1.0.0/ratingstandardizer-emby_1.0.0.0.zip",
-      "checksum": "00ec29bd968f1f23da28dc07f0226019",
-      "timestamp": "2026-04-21T11:35:18Z",
-      "targetFilename": "Emby.Plugin.RatingStandardizer.dll"
-    }
-  ]
-}
+[
+  {
+    "id": "rating-standardizer",
+    "guid": "e2688ed7-4bb2-4bba-9e0d-6ccfd1f2d8f3",
+    "name": "Rating Standardizer",
+    "overview": "Normalize official ratings across your library.",
+    "shortDescription": "Automatically standardizes official ratings for movies and series using configurable mappings.",
+    "description": "Automatically standardizes official ratings for movies and series using configurable mappings. Supports library update events and scheduled batch processing.",
+    "owner": "CassisCloud",
+    "category": "Metadata",
+    "thumbImage": "https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/assets/icon-pop.png",
+    "previewImage": "https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/assets/banner-pop.png",
+    "versions": [
+      {
+        "version": "1.0.0.0",
+        "changelog": "Initial public release.",
+        "sourceUrl": "https://github.com/CassisCloud/RatingStandardizer/releases/download/v1.0.0/Emby.Plugin.RatingStandardizer.dll",
+        "checksum": "TO_BE_FILLED_BY_RELEASE_WORKFLOW",
+        "timestamp": "TO_BE_FILLED_BY_RELEASE_WORKFLOW",
+        "targetFilename": "Emby.Plugin.RatingStandardizer.dll"
+      }
+    ]
+  }
+]

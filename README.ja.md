@@ -12,26 +12,13 @@ Rating Standardizer は、設定したマッピングルールに基づいてメ
 - カスタムマッピングに対応
 - 対象ライブラリを限定して処理可能
 
-## デフォルト設定
-
-- プラグイン状態: 有効
-- スケジュール: 毎週月曜 03:00（サーバーローカル時刻）
-- Target Libraries: オフ
-- プリセット: Custom
-
 ## インストール
 
-### マニフェストからインストール
+### Jellyfin
 
 Jellyfin 用リポジトリマニフェスト URL:
 
 `https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/manifest.json`
-
-Emby 用リポジトリマニフェスト URL:
-
-`https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/manifest.emby.json`
-
-Jellyfin:
 
 1. `Dashboard > Plugins > Repositories` を開きます。
 2. 新しいリポジトリを追加し、`https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/manifest.json` を登録します。
@@ -39,34 +26,36 @@ Jellyfin:
 4. `Rating Standardizer` を見つけてインストールします。
 5. 必要に応じて Jellyfin を再起動します。
 
-Emby:
+Jellyfin のリリース成果物は、リポジトリ経由インストール向けの zip です。
 
-1. `Server Dashboard > Plugins` を開きます。
-2. お使いの Emby ビルドで利用できるカスタムパッケージソースまたはリポジトリ URL に `https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/manifest.emby.json` を登録します。
-3. プラグインカタログを開きます。
-4. `Rating Standardizer` を見つけてインストールします。
-5. 必要に応じて Emby を再起動します。
+### Emby
 
-### 手動インストール
+Emby は手動でインストールしてください。
 
-1. リリースページからプラグイン ZIP または DLL をダウンロードします。
-2. `Jellyfin/Plugins` または Emby のプラグインフォルダに配置します。
-3. サーバーを再起動します。
-4. `Dashboard > Plugins > Rating Standardizer` を開きます。
+1. Emby Server を停止します。
+2. 最新リリースから `Emby.Plugin.RatingStandardizer.dll` をダウンロードします。
+3. Emby Server の data folder 配下にある `plugins` ディレクトリを開きます。
+4. 既存バージョンを更新する場合は、現在の `Emby.Plugin.RatingStandardizer.dll` を先にリネームして退避します。
+5. 新しい `Emby.Plugin.RatingStandardizer.dll` を `plugins` ディレクトリにコピーします。
+6. Emby Server を起動します。
+7. `Server Dashboard > Plugins` を開き、`Rating Standardizer` が表示されることを確認します。
+
+補足:
+
+- Linux や NAS では、配置した DLL の所有者と権限を既存の Emby plugin DLL と揃えてください。
+- 手動インストールされた Emby plugin に対して、カタログ用の画像やプレビュー画像が表示されることは保証できません。
+- Emby Server の data folder の場所は、Emby 公式ドキュメントを参照してください。
 
 ### 重要
 
-- サーバーから manifest URL に直接アクセスできる必要があります。
-- GitHub リポジトリが private の場合、`raw.githubusercontent.com` の URL では直接インストールできません。
-- その場合はリポジトリを public にするか、`manifest.json` と `manifest.emby.json` を公開された静的 URL に配置してください。
+- Jellyfin の manifest URL は、サーバーから直接アクセスできる必要があります。
+- リポジトリが private の場合、`raw.githubusercontent.com` の URL では Jellyfin に直接追加できません。
+- その場合はリポジトリを public にするか、`manifest.json` を公開された静的 URL に配置してください。
 
-## サイドバー表示
+## リリース成果物
 
-本プラグインは、Jellyfin / Emby 標準のプラグイン設定画面としてダッシュボードのサイドバーに表示されます。
-
-- 追加プラグインは不要です
-- 表示位置: `Dashboard > Rating Standardizer`
-- メニューに表示されない場合はサーバーを再起動してください
+- Jellyfin: `ratingstandardizer-jellyfin_<version>.zip`
+- Emby: `Emby.Plugin.RatingStandardizer.dll`
 
 ## ビルド
 

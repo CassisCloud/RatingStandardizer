@@ -124,16 +124,11 @@ jobs:
       - name: Package Jellyfin plugin
         shell: pwsh
         run: |
-          Copy-Item ./assets/*.png ./artifacts/jellyfin/publish/
+          Get-ChildItem ./artifacts/jellyfin/publish -File | Where-Object { $_.Name -ne 'Jellyfin.Plugin.RatingStandardizer.dll' } | Remove-Item -Force
           $zip = "./artifacts/ratingstandardizer-jellyfin_${{ needs.prepare.outputs.version4 }}.zip"
-          Compress-Archive -Path ./artifacts/jellyfin/publish/* -DestinationPath $zip -Force
-          $md5 = (Get-FileHash $zip -Algorithm MD5).Hash.ToLowerInvariant()
-          Set-Content ./artifacts/jellyfin-md5.txt $md5 -NoNewline
+          Compress-Archive -Path ./artifacts/jellyfin/publish/Jellyfin.Plugin.RatingStandardizer.dll -DestinationPath $zip -Force
           New-Item -ItemType Directory -Path ./artifacts/jellyfin-package -Force | Out-Null
           Copy-Item $zip ./artifacts/jellyfin-package/
-          Copy-Item ./artifacts/jellyfin-md5.txt ./artifacts/jellyfin-package/
-          Copy-Item ./manifest.json ./artifacts/jellyfin-package/
-          Copy-Item ./build.yaml ./artifacts/jellyfin-package/
 
       - name: Upload Jellyfin artifact
         uses: actions/upload-artifact@v4
@@ -175,20 +170,13 @@ jobs:
       - name: Copy Emby metadata assets
         shell: pwsh
         run: |
-          Copy-Item ./manifest.emby.json ./artifacts/emby/publish/
-          Copy-Item ./assets/*.png ./artifacts/emby/publish/
+          Get-ChildItem ./artifacts/emby/publish -File | Where-Object { $_.Name -ne 'Emby.Plugin.RatingStandardizer.dll' } | Remove-Item -Force
 
-      - name: Package Emby plugin
+      - name: Stage Emby plugin
         shell: pwsh
         run: |
-          $zip = "./artifacts/ratingstandardizer-emby_${{ needs.prepare.outputs.version4 }}.zip"
-          Compress-Archive -Path ./artifacts/emby/publish/* -DestinationPath $zip -Force
-          $md5 = (Get-FileHash $zip -Algorithm MD5).Hash.ToLowerInvariant()
-          Set-Content ./artifacts/emby-md5.txt $md5 -NoNewline
           New-Item -ItemType Directory -Path ./artifacts/emby-package -Force | Out-Null
-          Copy-Item $zip ./artifacts/emby-package/
-          Copy-Item ./artifacts/emby-md5.txt ./artifacts/emby-package/
-          Copy-Item ./manifest.emby.json ./artifacts/emby-package/
+          Copy-Item ./artifacts/emby/publish/Emby.Plugin.RatingStandardizer.dll ./artifacts/emby-package/
 
       - name: Upload Emby artifact
         uses: actions/upload-artifact@v4
@@ -220,14 +208,6 @@ jobs:
         with:
           name: emby-package
           path: artifacts/emby-package
-
-      - name: Create checksums
-        shell: pwsh
-        run: |
-          Get-ChildItem artifacts -Recurse -Filter *.zip | ForEach-Object {
-            $sha = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
-            Set-Content ($_.FullName + '.sha256') $sha -NoNewline
-          }
 
       - name: Create GitHub release
         uses: ncipollo/release-action@v1
@@ -264,10 +244,10 @@ jobs:
           $version4 = '${{ needs.prepare.outputs.version4 }}'
           $timestamp = '${{ needs.prepare.outputs.timestamp }}'
           $changelog = Get-Content artifacts/release-metadata/changelog.md -Raw
-          $jellyfinChecksum = Get-Content artifacts/jellyfin-md5.txt -Raw
-          $embyChecksum = Get-Content artifacts/emby-md5.txt -Raw
+          $jellyfinChecksum = (Get-FileHash "artifacts/ratingstandardizer-jellyfin_$version4.zip" -Algorithm MD5).Hash.ToLowerInvariant()
+          $embyChecksum = (Get-FileHash "artifacts/Emby.Plugin.RatingStandardizer.dll" -Algorithm MD5).Hash.ToLowerInvariant()
           $jellyfinSource = "https://github.com/CassisCloud/RatingStandardizer/releases/download/${{ needs.prepare.outputs.tag }}/ratingstandardizer-jellyfin_$version4.zip"
-          $embySource = "https://github.com/CassisCloud/RatingStandardizer/releases/download/${{ needs.prepare.outputs.tag }}/ratingstandardizer-emby_$version4.zip"
+          $embySource = "https://github.com/CassisCloud/RatingStandardizer/releases/download/${{ needs.prepare.outputs.tag }}/Emby.Plugin.RatingStandardizer.dll"
 
           $jellyfin = Get-Content manifest.json -Raw | ConvertFrom-Json
           $jellyfinVersion = [ordered]@{
