@@ -22,8 +22,8 @@ internal static class RatingStandardizerBatchRunner
 
     public static void Initialize(ILibraryManager libraryManager, ILogger logger)
     {
-        _libraryManager ??= libraryManager;
-        _logger ??= logger;
+        _libraryManager = libraryManager;
+        _logger = logger;
     }
 
     public static RatingStandardizerBatchRunResult Run(CancellationToken cancellationToken)
@@ -56,6 +56,12 @@ internal static class RatingStandardizerBatchRunner
                 return RatingStandardizerBatchRunResult.Disabled;
             }
 
+            if (configuration.Mappings.Count == 0)
+            {
+                logger.Warn("Rating Standardizer has no mappings configured. Batch run skipped.");
+                return RatingStandardizerBatchRunResult.NoMappingsConfigured;
+            }
+
             var items = libraryManager
                 .RootFolder
                 .GetRecursiveChildren()
@@ -71,6 +77,9 @@ internal static class RatingStandardizerBatchRunner
             var totalCount = items.Count;
             var updatedCount = 0;
             var matchedCount = 0;
+            var alreadyStandardizedCount = 0;
+            var missingOfficialRatingCount = 0;
+            var noMatchingRuleCount = 0;
 
             for (var index = 0; index < totalCount; index++)
             {
@@ -81,6 +90,28 @@ internal static class RatingStandardizerBatchRunner
                 if (result.MatchedMapping)
                 {
                     matchedCount++;
+
+                    if (result.Status == ItemRatingStandardizationStatus.AlreadyStandardized)
+                    {
+                        alreadyStandardizedCount++;
+                    }
+                }
+                else
+                {
+                    if (result.Status == ItemRatingStandardizationStatus.MissingOfficialRating)
+                    {
+                        missingOfficialRatingCount++;
+                    }
+                    else if (result.Status == ItemRatingStandardizationStatus.NoMatchingRule)
+                    {
+                        noMatchingRuleCount++;
+                    }
+
+                    logger.Debug(
+                        "Skipped item {0}. OfficialRating={1}, Reason={2}.",
+                        item.Name,
+                        item.OfficialRating,
+                        result.Status);
                 }
 
                 if (result.RequiresSave)
@@ -92,12 +123,15 @@ internal static class RatingStandardizerBatchRunner
             }
 
             logger.Info(
-                "Rating Standardizer batch run completed. Scanned {0} items, matched {1}, updated {2}.",
+                "Rating Standardizer batch run completed. Scanned {0} items, matched {1}, updated {2}, already standardized {3}, missing official rating {4}, no matching rule {5}.",
                 totalCount,
                 matchedCount,
-                updatedCount);
+                updatedCount,
+                alreadyStandardizedCount,
+                missingOfficialRatingCount,
+                noMatchingRuleCount);
 
-            return new RatingStandardizerBatchRunResult(true, false, totalCount, matchedCount, updatedCount);
+            return new RatingStandardizerBatchRunResult(true, false, false, totalCount, matchedCount, updatedCount, alreadyStandardizedCount, missingOfficialRatingCount, noMatchingRuleCount);
         }
         finally
         {
@@ -112,11 +146,17 @@ internal static class RatingStandardizerBatchRunner
 internal readonly record struct RatingStandardizerBatchRunResult(
     bool Success,
     bool SkippedBecauseDisabled,
+    bool SkippedBecauseNoMappings,
     int ScannedCount,
     int MatchedCount,
-    int UpdatedCount)
+    int UpdatedCount,
+    int AlreadyStandardizedCount,
+    int MissingOfficialRatingCount,
+    int NoMatchingRuleCount)
 {
-    public static RatingStandardizerBatchRunResult ConfigurationUnavailable => new(false, false, 0, 0, 0);
+    public static RatingStandardizerBatchRunResult ConfigurationUnavailable => new(false, false, false, 0, 0, 0, 0, 0, 0);
 
-    public static RatingStandardizerBatchRunResult Disabled => new(true, true, 0, 0, 0);
+    public static RatingStandardizerBatchRunResult Disabled => new(true, true, false, 0, 0, 0, 0, 0, 0);
+
+    public static RatingStandardizerBatchRunResult NoMappingsConfigured => new(true, false, true, 0, 0, 0, 0, 0, 0);
 }

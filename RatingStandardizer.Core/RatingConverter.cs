@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace RatingStandardizer.Core;
 
@@ -16,7 +17,8 @@ public sealed class RatingConverter
     /// <returns>The conversion result.</returns>
     public RatingConversionResult Convert(string? originalRating, IReadOnlyList<RatingMapping>? mappings)
     {
-        var normalizedOriginal = Normalize(originalRating);
+        var displayOriginal = NormalizeDisplayValue(originalRating);
+        var normalizedOriginal = NormalizeForComparison(originalRating);
         if (string.IsNullOrEmpty(normalizedOriginal) || mappings is null || mappings.Count == 0)
         {
             return RatingConversionResult.NoMatch;
@@ -24,8 +26,8 @@ public sealed class RatingConverter
 
         foreach (var mapping in mappings)
         {
-            var source = Normalize(mapping.OriginalRating);
-            var target = Normalize(mapping.TargetRating);
+            var source = NormalizeForComparison(mapping.OriginalRating);
+            var target = NormalizeDisplayValue(mapping.TargetRating);
             if (string.IsNullOrEmpty(source) || string.IsNullOrEmpty(target))
             {
                 continue;
@@ -36,19 +38,40 @@ public sealed class RatingConverter
                 continue;
             }
 
-            return new RatingConversionResult(true, normalizedOriginal, target);
+            return new RatingConversionResult(true, displayOriginal, target);
         }
 
         return RatingConversionResult.NoMatch;
     }
 
-    private static string Normalize(string? value)
+    private static string NormalizeDisplayValue(string? value)
     {
-        if (value is null) {
+        if (value is null)
+        {
             return string.Empty;
         }
 
         var normalized = value.Trim();
         return normalized.Length == 0 ? string.Empty : normalized;
+    }
+
+    private static string NormalizeForComparison(string? value)
+    {
+        var displayValue = NormalizeDisplayValue(value);
+        if (displayValue.Length == 0)
+        {
+            return string.Empty;
+        }
+
+        var builder = new StringBuilder(displayValue.Length);
+        foreach (var character in displayValue)
+        {
+            if (char.IsLetterOrDigit(character) || character == '+')
+            {
+                builder.Append(char.ToUpperInvariant(character));
+            }
+        }
+
+        return builder.ToString();
     }
 }

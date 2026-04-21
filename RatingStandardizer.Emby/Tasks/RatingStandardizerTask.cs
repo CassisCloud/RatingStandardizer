@@ -11,17 +11,11 @@ namespace RatingStandardizer.Emby.Tasks;
 public sealed class RatingStandardizerTask : IScheduledTask
 {
     private readonly ILogManager _logManager;
-    private static bool _isInitialized;
 
     public RatingStandardizerTask(ILibraryManager libraryManager, ILogManager logManager)
     {
         _logManager = logManager;
-
-        if (!_isInitialized)
-        {
-            RatingStandardizerBatchRunner.Initialize(libraryManager, logManager.GetLogger(nameof(RatingStandardizerBatchRunner)));
-            _isInitialized = true;
-        }
+        RatingStandardizerBatchRunner.Initialize(libraryManager, logManager.GetLogger(nameof(RatingStandardizerBatchRunner)));
     }
 
     public string Name => "Standardize Official Ratings";
@@ -51,6 +45,15 @@ public sealed class RatingStandardizerTask : IScheduledTask
 
         var result = RatingStandardizerBatchRunner.Run(cancellationToken);
         progress.Report(100);
+
+        if (result.SkippedBecauseDisabled)
+        {
+            logger.Info("Rating Standardizer task skipped because the plugin is disabled.");
+        }
+        else if (result.SkippedBecauseNoMappings)
+        {
+            logger.Warn("Rating Standardizer task skipped because no custom mappings are configured.");
+        }
 
         logger.Info(
             "Rating Standardizer task completed. Scanned {0} items, matched {1}, updated {2}.",

@@ -17,13 +17,23 @@ internal static class ItemRatingStandardizer
     {
         if (item is not Video && item is not Series)
         {
-            return ItemRatingStandardizationResult.NotApplicable;
+            return ItemRatingStandardizationResult.UnsupportedItemType;
+        }
+
+        if (mappings is null || mappings.Count == 0)
+        {
+            return ItemRatingStandardizationResult.NoMappingsConfigured;
+        }
+
+        if (string.IsNullOrWhiteSpace(item.OfficialRating))
+        {
+            return ItemRatingStandardizationResult.MissingOfficialRating;
         }
 
         var conversion = converter.Convert(item.OfficialRating, mappings);
         if (!conversion.MatchedMapping)
         {
-            return ItemRatingStandardizationResult.NotApplicable;
+            return ItemRatingStandardizationResult.NoMatchingRule;
         }
 
         var ratingChanged = !string.Equals(item.OfficialRating, conversion.TargetRating, StringComparison.Ordinal);
@@ -39,7 +49,12 @@ internal static class ItemRatingStandardizer
             item.LockedFields = [.. lockedFields, MetadataFields.OfficialRating];
         }
 
-        return new ItemRatingStandardizationResult(true, ratingChanged, lockAdded, conversion.OriginalRating, conversion.TargetRating);
+        if (!ratingChanged && !lockAdded)
+        {
+            return new ItemRatingStandardizationResult(true, false, false, ItemRatingStandardizationStatus.AlreadyStandardized, conversion.OriginalRating, conversion.TargetRating);
+        }
+
+        return new ItemRatingStandardizationResult(true, ratingChanged, lockAdded, ItemRatingStandardizationStatus.Standardized, conversion.OriginalRating, conversion.TargetRating);
     }
 }
 
@@ -47,10 +62,27 @@ internal readonly record struct ItemRatingStandardizationResult(
     bool MatchedMapping,
     bool RatingChanged,
     bool LockAdded,
+    ItemRatingStandardizationStatus Status,
     string? OriginalRating,
     string? TargetRating)
 {
-    public static ItemRatingStandardizationResult NotApplicable => new(false, false, false, null, null);
+    public static ItemRatingStandardizationResult UnsupportedItemType => new(false, false, false, ItemRatingStandardizationStatus.UnsupportedItemType, null, null);
+
+    public static ItemRatingStandardizationResult NoMappingsConfigured => new(false, false, false, ItemRatingStandardizationStatus.NoMappingsConfigured, null, null);
+
+    public static ItemRatingStandardizationResult MissingOfficialRating => new(false, false, false, ItemRatingStandardizationStatus.MissingOfficialRating, null, null);
+
+    public static ItemRatingStandardizationResult NoMatchingRule => new(false, false, false, ItemRatingStandardizationStatus.NoMatchingRule, null, null);
 
     public bool RequiresSave => RatingChanged || LockAdded;
+}
+
+internal enum ItemRatingStandardizationStatus
+{
+    UnsupportedItemType,
+    NoMappingsConfigured,
+    MissingOfficialRating,
+    NoMatchingRule,
+    AlreadyStandardized,
+    Standardized
 }

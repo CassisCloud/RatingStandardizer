@@ -73,24 +73,44 @@ public sealed class ServerEntryPoint : IServerEntryPoint, IDisposable
 
             if (!configuration.IsEnabled)
             {
+                _logger.Debug("Rating Standardizer is disabled; skipping item {0}.", e.Item.Name);
+                return;
+            }
+
+            if (configuration.Mappings.Count == 0)
+            {
+                _logger.Warn("Rating Standardizer has no mappings configured; skipping item {0}.", e.Item.Name);
                 return;
             }
 
             var targetLookup = LibraryFilter.CreateTargetLookup(configuration.TargetLibraryIds);
             if (!LibraryFilter.IsMatch(e.Item, targetLookup))
             {
+                _logger.Debug("Skipped item {0} because it does not belong to the selected target libraries.", e.Item.Name);
                 return;
             }
 
             var result = ItemRatingStandardizer.Apply(e.Item, configuration.Mappings, _ratingConverter);
             if (!result.MatchedMapping)
             {
+                _logger.Info(
+                    "Skipped item {0}. OfficialRating={1}, Reason={2}, MappingCount={3}, TargetLibraryCount={4}.",
+                    e.Item.Name,
+                    e.Item.OfficialRating,
+                    result.Status,
+                    configuration.Mappings.Count,
+                    configuration.TargetLibraryIds.Count);
                 return;
             }
 
             if (!result.RequiresSave)
             {
-                _logger.Debug("Rating mapping matched for {0}, but no save was required.", e.Item.Name);
+                _logger.Debug(
+                    "Rating mapping matched for {0}, but no save was required. OfficialRating={1}, TargetRating={2}, Reason={3}.",
+                    e.Item.Name,
+                    e.Item.OfficialRating,
+                    result.TargetRating,
+                    result.Status);
                 return;
             }
 

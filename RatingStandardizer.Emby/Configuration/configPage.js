@@ -452,6 +452,8 @@ define(['baseView', 'loading', 'emby-input', 'emby-button', 'emby-select', 'emby
     }
 
     function loadPage(page, config) {
+        var mappingCount = Array.isArray(config.Mappings) ? config.Mappings.length : 0;
+
         page._initialCustomMappings = cloneMappings(config.Mappings || []);
         page.querySelector('.chkIsEnabled').checked = !!config.IsEnabled;
         page.querySelector('.selectPreset').value = inferPresetKey(config.Mappings || []);
@@ -461,6 +463,10 @@ define(['baseView', 'loading', 'emby-input', 'emby-button', 'emby-select', 'emby
         setError(page, '');
         setStatus(page, '');
         setLibraryStatus(page, '');
+
+        if (mappingCount === 0) {
+            setStatus(page, 'Custom mappings are empty. The plugin will not change ratings until you save at least one mapping.');
+        }
 
         return loadLibraries(page, config).then(function () {
             loading.hide();
@@ -488,19 +494,40 @@ define(['baseView', 'loading', 'emby-input', 'emby-button', 'emby-select', 'emby
         setError(page, '');
         setStatus(page, '');
 
-        ApiClient.ajax({
-            type: 'POST',
-            url: ApiClient.getUrl('Plugins/RatingStandardizer/RunNow'),
-            dataType: 'json'
-        }).then(function (result) {
-            if (result && result.SkippedBecauseDisabled) {
+        ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+            if (!config || !config.IsEnabled) {
                 setStatus(page, 'Plugin is disabled. Enable it and save before running.');
+                return null;
+            }
+
+            if (!Array.isArray(config.Mappings) || config.Mappings.length === 0) {
+                setStatus(page, 'Custom mappings are empty. Save at least one mapping before running.');
+                return null;
+            }
+
+            return ApiClient.ajax({
+                type: 'POST',
+                url: ApiClient.getUrl('Plugins/RatingStandardizer/RunNow'),
+                dataType: 'json'
+            });
+        }).then(function (result) {
+            if (!result) {
+                return;
+            }
+
+            if (result.SkippedBecauseDisabled) {
+                setStatus(page, 'Plugin is disabled. Enable it and save before running.');
+                return;
+            }
+
+            if (result.SkippedBecauseNoMappings) {
+                setStatus(page, 'Custom mappings are empty. Save at least one mapping before running.');
                 return;
             }
 
             setStatus(
                 page,
-                'Completed. Scanned ' + (result ? result.ScannedCount : 0) + ' items, matched ' + (result ? result.MatchedCount : 0) + ', updated ' + (result ? result.UpdatedCount : 0) + '.'
+                'Completed. Scanned ' + result.ScannedCount + ' items, matched ' + result.MatchedCount + ', updated ' + result.UpdatedCount + ', already standardized ' + (result.AlreadyStandardizedCount || 0) + ', missing official rating ' + (result.MissingOfficialRatingCount || 0) + ', no matching rule ' + (result.NoMatchingRuleCount || 0) + '.'
             );
         }).catch(function (error) {
             console.error('Failed to run Rating Standardizer.', error);
@@ -528,6 +555,7 @@ define(['baseView', 'loading', 'emby-input', 'emby-button', 'emby-select', 'emby
             return ApiClient.updatePluginConfiguration(pluginId, config);
         }).then(function (result) {
             Dashboard.processPluginConfigurationUpdateResult(result);
+            setStatus(page, collectMappings(page).length === 0 ? 'Configuration saved, but custom mappings are empty. No ratings will change until you add at least one mapping.' : 'Configuration saved.');
             loading.hide();
         }).catch(function (error) {
             console.error('Failed to save Rating Standardizer configuration.', error);

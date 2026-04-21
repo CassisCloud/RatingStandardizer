@@ -258,7 +258,7 @@ jobs:
             checksum = $jellyfinChecksum
             timestamp = $timestamp
           }
-          $jellyfin[0].versions = @($jellyfinVersion) + @($jellyfin[0].versions | Where-Object { $_.version -ne $version4 })
+          $jellyfin.versions = @($jellyfinVersion) + @($jellyfin.versions | Where-Object { $_.version -ne $version4 })
           $jellyfin | ConvertTo-Json -Depth 10 | Set-Content manifest.json
 
           $emby = Get-Content manifest.emby.json -Raw | ConvertFrom-Json

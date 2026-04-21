@@ -916,6 +916,12 @@
                         });
                 }
 
+                function showEmptyMappingsStatus(mappings) {
+                    if (!Array.isArray(mappings) || mappings.length === 0) {
+                        setStatus('Custom mappings are empty. The plugin will not change ratings until you save at least one mapping.');
+                    }
+                }
+
                 function getSelectedPreset() {
                     return RatingStandardizerConfig.presets[presetSelector.value] || RatingStandardizerConfig.presets.japan;
                 }
@@ -955,12 +961,29 @@
                     setStatus('');
                     Dashboard.showLoadingMsg();
 
-                    ApiClient.ajax({
-                        type: 'GET',
-                        url: ApiClient.getUrl('ScheduledTasks'),
-                        dataType: 'json'
-                    })
+                    ApiClient.getPluginConfiguration(RatingStandardizerConfig.pluginUniqueId)
+                        .then(function (config) {
+                            if (!config || !config.IsEnabled) {
+                                setStatus('Plugin is disabled. Enable it and save before running.');
+                                return null;
+                            }
+
+                            if (!Array.isArray(config.Mappings) || config.Mappings.length === 0) {
+                                setStatus('Custom mappings are empty. Save at least one mapping before running.');
+                                return null;
+                            }
+
+                            return ApiClient.ajax({
+                                type: 'GET',
+                                url: ApiClient.getUrl('ScheduledTasks'),
+                                dataType: 'json'
+                            });
+                        })
                         .then(function (tasks) {
+                            if (!tasks) {
+                                return null;
+                            }
+
                             var task = (tasks || []).filter(function (entry) {
                                 return entry && entry.Key === 'RatingStandardizerBatchTask';
                             })[0];
@@ -974,7 +997,11 @@
                                 url: ApiClient.getUrl('ScheduledTasks/Running/' + encodeURIComponent(task.Id))
                             });
                         })
-                        .then(function () {
+                        .then(function (startResult) {
+                            if (startResult === null) {
+                                return;
+                            }
+
                             setStatus('Run started. Progress is available from Scheduled Tasks.');
                         })
                         .catch(function (error) {
@@ -1003,6 +1030,7 @@
                             renderMappings(config.Mappings || []);
                             updatePresetDescription();
                             updateMappingsEditorVisibility();
+                            showEmptyMappingsStatus(config.Mappings || []);
                             return loadLibraries(config);
                         })
                         .then(function () {
@@ -1064,6 +1092,7 @@
                         })
                         .then(function (result) {
                             Dashboard.processPluginConfigurationUpdateResult(result);
+                            setStatus(collectMappings().length === 0 ? 'Configuration saved, but custom mappings are empty. No ratings will change until you add at least one mapping.' : 'Configuration saved.');
                             Dashboard.hideLoadingMsg();
                         })
                         .catch(function (error) {

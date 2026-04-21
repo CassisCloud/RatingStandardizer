@@ -87,26 +87,48 @@ public sealed class ServerEntryPoint : IHostedService, IDisposable
 
             if (!configuration.IsEnabled)
             {
+                _logger.LogDebug("Rating Standardizer is disabled; skipping item {ItemName}.", e.Item.Name);
+                return;
+            }
+
+            if (configuration.Mappings.Count == 0)
+            {
+                _logger.LogWarning(
+                    "Rating Standardizer has no mappings configured; skipping item {ItemName}. Save at least one custom mapping before expecting automatic changes.",
+                    e.Item.Name);
                 return;
             }
 
             var targetLookup = LibraryFilter.CreateTargetLookup(configuration.TargetLibraryIds);
             if (!LibraryFilter.IsMatch(e.Item, targetLookup))
             {
+                _logger.LogDebug(
+                    "Skipped item {ItemName} because it does not belong to the selected target libraries.",
+                    e.Item.Name);
                 return;
             }
 
             var result = ItemRatingStandardizer.Apply(e.Item, configuration.Mappings, _ratingConverter);
             if (!result.MatchedMapping)
             {
+                _logger.LogInformation(
+                    "Skipped item {ItemName}. OfficialRating={OfficialRating}, Reason={Reason}, MappingCount={MappingCount}, TargetLibraryCount={TargetLibraryCount}.",
+                    e.Item.Name,
+                    e.Item.OfficialRating,
+                    result.Status,
+                    configuration.Mappings.Count,
+                    configuration.TargetLibraryIds.Count);
                 return;
             }
 
             if (!result.RequiresSave)
             {
                 _logger.LogDebug(
-                    "Rating mapping matched for {ItemName}, but no save was required.",
-                    e.Item.Name);
+                    "Rating mapping matched for {ItemName}, but no save was required. OfficialRating={OfficialRating}, TargetRating={TargetRating}, Reason={Reason}.",
+                    e.Item.Name,
+                    e.Item.OfficialRating,
+                    result.TargetRating,
+                    result.Status);
                 return;
             }
 
