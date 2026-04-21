@@ -21,10 +21,44 @@ Rating Standardizer is a Jellyfin / Emby plugin that normalizes media ratings ba
 
 ## Installation
 
-1. Download the plugin DLL from the release page.
+### Install From Manifest
+
+Jellyfin repository manifest URL:
+
+`https://raw.githubusercontent.com/CassisCloud/rating-standardizer/main/manifest.json`
+
+Emby repository manifest URL:
+
+`https://raw.githubusercontent.com/CassisCloud/rating-standardizer/main/manifest.emby.json`
+
+Jellyfin:
+
+1. Open `Dashboard > Plugins > Repositories`.
+2. Add a new repository and paste `https://raw.githubusercontent.com/CassisCloud/rating-standardizer/main/manifest.json`.
+3. Open `Dashboard > Plugins > Catalog`.
+4. Find `Rating Standardizer` and install it.
+5. Restart Jellyfin if requested.
+
+Emby:
+
+1. Open `Server Dashboard > Plugins`.
+2. Add the custom package source or repository URL supported by your Emby build and paste `https://raw.githubusercontent.com/CassisCloud/rating-standardizer/main/manifest.emby.json`.
+3. Open the plugin catalog.
+4. Find `Rating Standardizer` and install it.
+5. Restart Emby if requested.
+
+### Manual Install
+
+1. Download the plugin package or DLL from the release page.
 2. Place it in your `Jellyfin/Plugins` or Emby plugin folder.
 3. Restart the server.
 4. Open `Dashboard > Plugins > Rating Standardizer`.
+
+### Important
+
+- The manifest URLs must be publicly reachable by the server.
+- If the GitHub repository is private, `raw.githubusercontent.com` URLs will not work for direct installation.
+- In that case, make the repository public or host `manifest.json` and `manifest.emby.json` on a public static URL.
 
 ## Sidebar Menu
 

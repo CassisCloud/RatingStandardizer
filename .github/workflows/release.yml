@@ -134,6 +134,8 @@ jobs:
           path: |
             artifacts/rating-standardizer-jellyfin_*.zip
             artifacts/jellyfin-md5.txt
+            manifest.json
+            build.yaml
 
   build-emby:
     runs-on: ubuntu-latest
@@ -187,6 +189,7 @@ jobs:
           path: |
             artifacts/rating-standardizer-emby_*.zip
             artifacts/emby-md5.txt
+            manifest.emby.json
 
   release:
     runs-on: ubuntu-latest
@@ -229,9 +232,12 @@ jobs:
           artifacts: |
             artifacts/jellyfin-package/*.zip
             artifacts/jellyfin-package/*.txt
+            artifacts/jellyfin-package/*.json
+            artifacts/jellyfin-package/*.yaml
             artifacts/jellyfin-package/*.sha256
             artifacts/emby-package/*.zip
             artifacts/emby-package/*.txt
+            artifacts/emby-package/*.json
             artifacts/emby-package/*.sha256
 
       - name: Checkout default branch

@@ -21,10 +21,44 @@ Rating Standardizer は、設定したマッピングルールに基づいてメ
 
 ## インストール
 
-1. リリースページからプラグイン DLL をダウンロードします。
+### マニフェストからインストール
+
+Jellyfin 用リポジトリマニフェスト URL:
+
+`https://raw.githubusercontent.com/CassisCloud/rating-standardizer/main/manifest.json`
+
+Emby 用リポジトリマニフェスト URL:
+
+`https://raw.githubusercontent.com/CassisCloud/rating-standardizer/main/manifest.emby.json`
+
+Jellyfin:
+
+1. `Dashboard > Plugins > Repositories` を開きます。
+2. 新しいリポジトリを追加し、`https://raw.githubusercontent.com/CassisCloud/rating-standardizer/main/manifest.json` を登録します。
+3. `Dashboard > Plugins > Catalog` を開きます。
+4. `Rating Standardizer` を見つけてインストールします。
+5. 必要に応じて Jellyfin を再起動します。
+
+Emby:
+
+1. `Server Dashboard > Plugins` を開きます。
+2. お使いの Emby ビルドで利用できるカスタムパッケージソースまたはリポジトリ URL に `https://raw.githubusercontent.com/CassisCloud/rating-standardizer/main/manifest.emby.json` を登録します。
+3. プラグインカタログを開きます。
+4. `Rating Standardizer` を見つけてインストールします。
+5. 必要に応じて Emby を再起動します。
+
+### 手動インストール
+
+1. リリースページからプラグイン ZIP または DLL をダウンロードします。
 2. `Jellyfin/Plugins` または Emby のプラグインフォルダに配置します。
 3. サーバーを再起動します。
 4. `Dashboard > Plugins > Rating Standardizer` を開きます。
+
+### 重要
+
+- サーバーから manifest URL に直接アクセスできる必要があります。
+- GitHub リポジトリが private の場合、`raw.githubusercontent.com` の URL では直接インストールできません。
+- その場合はリポジトリを public にするか、`manifest.json` と `manifest.emby.json` を公開された静的 URL に配置してください。
 
 ## サイドバー表示
 

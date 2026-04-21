@@ -1,21 +1,27 @@
-{
-  "guid": "e2688ed7-4bb2-4bba-9e0d-6ccfd1f2d8f3",
-  "name": "Rating Standardizer",
-  "overview": "Normalize official ratings across your library.",
-  "shortDescription": "Automatically standardizes official ratings for movies and series using configurable mappings.",
-  "description": "Automatically standardizes official ratings for movies and series using configurable mappings. Supports library update events and scheduled batch processing.",
-  "owner": "CassisCloud",
-  "category": "Metadata",
-  "thumbImage": "https://raw.githubusercontent.com/CassisCloud/rating-standardizer/main/assets/icon-pop.png",
-  "previewImage": "https://raw.githubusercontent.com/CassisCloud/rating-standardizer/main/assets/banner-pop.png",
-  "versions": [
-    {
-      "version": "1.0.0.0",
-      "changelog": "- feat: add plugin release metadata and artwork (a798871)- feat: refine ratings plugin defaults and docs (1b46d8e)- feat: add launch-all action to build and start Jellyfin & Emby together (a2b3bbb)- feat(jellyfin): update Jellyfin plugin configuration and core wiring (6c56160)- feat(emby): update Emby plugin configuration and core wiring (6cef93b)- feat: add LibraryFilter scaffolds for Emby and Jellyfin (300fa3a)- Add sidebar display for settings page and clean up Plugin.cs (3a0ee63)- Add scheduled task support for batch rating conversion (9a022dd)- first commit (ef8c4e2)",
-      "sourceUrl": "https://github.com/CassisCloud/rating-standardizer/releases/download/v1.0.0/rating-standardizer-emby_1.0.0.0.zip",
-      "checksum": "19e53f7d38091cda0d2e284069159c7b",
-      "timestamp": "2026-04-21T11:00:53Z",
-      "targetFilename": "Emby.Plugin.RatingStandardizer.dll"
-    }
-  ]
-}
+[
+  {
+    "id": "rating-standardizer",
+    "guid": "e2688ed7-4bb2-4bba-9e0d-6ccfd1f2d8f3",
+    "name": "Rating Standardizer",
+    "overview": "Normalize official ratings across your library.",
+    "shortDescription": "Automatically standardizes official ratings for movies and series using configurable mappings.",
+    "description": "Automatically standardizes official ratings for movies and series using configurable mappings. Supports library update events and scheduled batch processing.",
+    "owner": "CassisCloud",
+    "category": "Metadata",
+    "type": "plugin",
+    "targetSystem": "Server",
+    "enableInAppStore": true,
+    "thumbImage": "https://raw.githubusercontent.com/CassisCloud/rating-standardizer/main/assets/icon-pop.png",
+    "previewImage": "https://raw.githubusercontent.com/CassisCloud/rating-standardizer/main/assets/banner-pop.png",
+    "versions": [
+      {
+        "version": "1.0.0.0",
+        "changelog": "- feat: add plugin release metadata and artwork (a798871)- feat: refine ratings plugin defaults and docs (1b46d8e)- feat: add launch-all action to build and start Jellyfin & Emby together (a2b3bbb)- feat(jellyfin): update Jellyfin plugin configuration and core wiring (6c56160)- feat(emby): update Emby plugin configuration and core wiring (6cef93b)- feat: add LibraryFilter scaffolds for Emby and Jellyfin (300fa3a)- Add sidebar display for settings page and clean up Plugin.cs (3a0ee63)- Add scheduled task support for batch rating conversion (9a022dd)- first commit (ef8c4e2)",
+        "sourceUrl": "https://github.com/CassisCloud/rating-standardizer/releases/download/v1.0.0/rating-standardizer-emby_1.0.0.0.zip",
+        "checksum": "19e53f7d38091cda0d2e284069159c7b",
+        "timestamp": "2026-04-21T11:00:53Z",
+        "targetFilename": "Emby.Plugin.RatingStandardizer.dll"
+      }
+    ]
+  }
+]
