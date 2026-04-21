@@ -1,0 +1,414 @@
+<div is="emby-scroller" class="view flex flex-direction-column scrollFrameY flex-grow pluginConfigurationPage" data-horizontal="false" data-forcescrollbar="true" data-centerfocus="true" data-bindheader="true" data-controller="__plugin/ratingstandardizerjs-v6" data-title="Rating Standardizer">
+    <div class="scrollSlider flex-grow flex-direction-column padded-left padded-left-page padded-right padded-top-page padded-bottom-page">
+        <style>
+            .ratingStandardizerPage {
+                display: grid;
+                gap: 1rem;
+            }
+
+            .ratingStandardizerPage [hidden] {
+                display: none !important;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerCard {
+                padding: 1.1rem 1.15rem;
+                border: 1px solid rgba(255, 255, 255, 0.14);
+                border-radius: 18px;
+                background: linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.032));
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+            }
+
+            .ratingStandardizerPage .ratingStandardizerCardHeader {
+                display: flex;
+                justify-content: space-between;
+                gap: 1rem;
+                align-items: flex-start;
+                margin-bottom: 0.9rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerCardHeader h2,
+            .ratingStandardizerPage .ratingStandardizerCardHeader h3,
+            .ratingStandardizerPage .ratingStandardizerCardHeader p {
+                margin: 0;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerCardHeader p {
+                opacity: 0.78;
+                margin-top: 0.3rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerToggleCard {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerToggleCopy {
+                min-width: 0;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerToolbar {
+                display: grid;
+                grid-template-columns: minmax(16rem, 1fr) auto auto;
+                gap: 0.75rem;
+                align-items: end;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerPresetWrapper {
+                display: flex;
+                min-width: 16rem;
+                max-width: 22rem;
+                flex: 1 1 18rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerPresetButton {
+                min-width: 9rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerRestoreButton {
+                min-width: 9rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerPresetDescription {
+                margin-top: 0.75rem;
+                opacity: 0.82;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerMappingsWrap {
+                overflow-x: auto;
+                margin-top: 1rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerMappingsTable {
+                width: 100%;
+                min-width: 34rem;
+                border-collapse: separate;
+                border-spacing: 0 0.7rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerMappingsTable thead th {
+                padding: 0 0.75rem 0.2rem;
+                text-align: left;
+                white-space: nowrap;
+                font-size: 0.8rem;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+                opacity: 0.65;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerMappingsTable tbody td {
+                padding: 0.75rem;
+                vertical-align: middle;
+                background: rgba(255, 255, 255, 0.03);
+                border-top: 1px solid rgba(255, 255, 255, 0.06);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            }
+
+            .ratingStandardizerPage .ratingStandardizerMappingsTable tbody td:first-child {
+                border-left: 1px solid rgba(255, 255, 255, 0.06);
+                border-radius: 16px 0 0 16px;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerMappingsTable tbody td:last-child {
+                border-right: 1px solid rgba(255, 255, 255, 0.06);
+                border-radius: 0 16px 16px 0;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerMappingsTable input {
+                margin: 0;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerOriginalInput,
+            .ratingStandardizerPage .ratingStandardizerTargetInput {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerArrowCell {
+                width: 1%;
+                padding-left: 0.2rem;
+                padding-right: 0.2rem;
+                text-align: center;
+                font-size: 1rem;
+                color: rgba(255, 255, 255, 0.98);
+            }
+
+            .ratingStandardizerPage .ratingStandardizerArrowGlyph {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 1.9rem;
+                height: 1.9rem;
+                padding: 0 0.4rem;
+                border-radius: 999px;
+                background: rgba(67, 78, 100, 0.92);
+                color: #fff;
+                font-size: 1.08rem;
+                font-weight: 700;
+                box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 6px 14px rgba(0, 0, 0, 0.16);
+            }
+
+            .ratingStandardizerPage .ratingStandardizerDeleteCell {
+                width: 1%;
+                white-space: nowrap;
+                text-align: right;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerDeleteButton {
+                min-width: 0;
+                width: 2rem;
+                height: 2rem;
+                padding: 0;
+                border-radius: 999px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                line-height: 1;
+                color: #ffd7d7;
+                background: rgba(225, 68, 68, 0.88);
+                border: 1px solid rgba(255, 138, 138, 0.88);
+                box-shadow: 0 10px 22px rgba(225, 68, 68, 0.18);
+                transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerDeleteButton span {
+                color: #fff;
+                font-weight: 700;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerDeleteButton:hover {
+                color: #fff;
+                background: rgba(194, 42, 42, 0.96);
+                border-color: rgba(255, 169, 169, 0.95);
+                transform: scale(1.04);
+            }
+
+            .ratingStandardizerPage .ratingStandardizerActions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                margin-top: 1rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerError {
+                display: none;
+                color: #ff6b6b;
+                margin-top: 1rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerStatus {
+                display: none;
+                color: #6de28d;
+                margin-top: 1rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerActionRow {
+                display: grid;
+                gap: 0.75rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerLibraryWrap {
+                margin-top: 0.25rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerLibraryList {
+                margin-top: 1rem;
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+                gap: 0.75rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerLibraryList.is-disabled {
+                opacity: 0.45;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerLibraryItem {
+                position: relative;
+                display: block;
+                padding: 0;
+                border-radius: 16px;
+                border: 1px solid rgba(255, 255, 255, 0.24);
+                background: rgba(255, 255, 255, 0.085);
+                box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 8px 20px rgba(0, 0, 0, 0.08);
+                cursor: pointer;
+                transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+                overflow: hidden;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerLibraryItem:hover {
+                transform: translateY(-1px);
+                border-color: rgba(255, 255, 255, 0.34);
+                background: rgba(255, 255, 255, 0.12);
+            }
+
+            .ratingStandardizerPage .ratingStandardizerLibraryItem.is-selected {
+                border-color: rgba(0, 185, 150, 0.55);
+                background: rgba(0, 185, 150, 0.1);
+                box-shadow: 0 0 0 1px rgba(0, 185, 150, 0.16) inset, 0 10px 28px rgba(0, 185, 150, 0.16);
+            }
+
+            .ratingStandardizerPage .ratingStandardizerLibraryItem input {
+                position: absolute;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerLibraryContent {
+                display: grid;
+                grid-template-columns: auto 1fr;
+                gap: 0.85rem;
+                align-items: center;
+                min-height: 4.5rem;
+                padding: 0.95rem 1rem;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerLibraryCheck {
+                width: 1.15rem;
+                height: 1.15rem;
+                border-radius: 999px;
+                border: 2px solid rgba(255, 255, 255, 0.28);
+                background: rgba(255, 255, 255, 0.04);
+                box-sizing: border-box;
+                transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerLibraryItem.is-selected .ratingStandardizerLibraryCheck {
+                border-color: rgba(0, 185, 150, 0.95);
+                background: rgba(0, 185, 150, 0.92);
+                box-shadow: 0 0 0 4px rgba(0, 185, 150, 0.16);
+            }
+
+            .ratingStandardizerPage .ratingStandardizerLibraryLabel {
+                min-width: 0;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerLibraryName {
+                display: block;
+                font-weight: 600;
+                line-height: 1.35;
+                word-break: break-word;
+            }
+
+            .ratingStandardizerPage .ratingStandardizerLibraryStatus {
+                display: none;
+                margin-top: 0.75rem;
+                color: #d4b106;
+            }
+
+            @media (max-width: 700px) {
+                .ratingStandardizerPage .ratingStandardizerToggleCard,
+                .ratingStandardizerPage .ratingStandardizerCardHeader {
+                    display: block;
+                }
+
+                .ratingStandardizerPage .ratingStandardizerToolbar {
+                    grid-template-columns: 1fr;
+                }
+
+                .ratingStandardizerPage .ratingStandardizerToggleCard .checkboxContainer {
+                    margin-top: 0.8rem;
+                }
+
+                .ratingStandardizerPage .ratingStandardizerMappingsTable {
+                    min-width: 28rem;
+                }
+            }
+        </style>
+
+        <form class="ratingStandardizerForm auto-center ratingStandardizerPage">
+            <section class="ratingStandardizerCard ratingStandardizerToggleCard">
+                <div class="ratingStandardizerToggleCopy">
+                    <h2 class="sectionTitle">Rating Standardizer</h2>
+                    <div class="fieldDescription">Standardize `OfficialRating`, lock the field after conversion, and keep processing scoped to the libraries you choose.</div>
+                </div>
+                <div class="checkboxContainer checkboxContainer-withDescription">
+                    <label>
+                        <input type="checkbox" is="emby-checkbox" class="chkIsEnabled" />
+                        <span>Enable plugin</span>
+                    </label>
+                    <div class="fieldDescription checkboxFieldDescription">Apply changes on item add/update and through the scheduled task.</div>
+                </div>
+            </section>
+
+            <section class="ratingStandardizerCard">
+                <div class="ratingStandardizerCardHeader">
+                    <div>
+                        <h3 class="sectionTitle">Target Libraries</h3>
+                        <p class="fieldDescription">Choose whether to process every library or limit the plugin to a selected subset.</p>
+                    </div>
+                </div>
+
+                <div class="ratingStandardizerCardBody">
+                    <div class="checkboxContainer checkboxContainer-withDescription ratingStandardizerLibraryWrap">
+                        <label>
+                            <input type="checkbox" is="emby-checkbox" class="chkAllLibraries" />
+                            <span>Limit to selected libraries</span>
+                        </label>
+                        <div class="fieldDescription">Turn this on to choose specific libraries. Leave it off to process all libraries.</div>
+                    </div>
+
+                    <div class="fieldDescription librarySelectionHint">Enable this option to pick the libraries you want to target.</div>
+                    <div class="ratingStandardizerLibraryList libraryListContainer" hidden></div>
+                    <div class="fieldDescription ratingStandardizerLibraryStatus libraryLoadStatus"></div>
+                </div>
+            </section>
+
+            <section class="ratingStandardizerCard">
+                <div class="ratingStandardizerCardHeader">
+                    <div>
+                        <h3 class="sectionTitle">Rating Mappings</h3>
+                        <p class="fieldDescription">Pick a preset as a starting point, then fine-tune the mappings below. `12+`, JP ratings, and TV ratings are supported in the built-in presets.</p>
+                    </div>
+                </div>
+
+                <div class="ratingStandardizerCardBody">
+                    <div class="ratingStandardizerToolbar">
+                        <div class="ratingStandardizerPresetWrapper">
+                            <select is="emby-select" class="selectPreset" label="Preset">
+                                <option value="japan">Japan</option>
+                                <option value="unitedStates">United States</option>
+                                <option value="europe">Europe (6/12/16/18)</option>
+                                <option value="australia">Australia</option>
+                                <option value="blank">Custom</option>
+                            </select>
+                        </div>
+                        <button is="emby-button" type="button" class="button-flat btnApplyPreset ratingStandardizerPresetButton"><span>Apply preset</span></button>
+                        <button is="emby-button" type="button" class="button-flat btnRestoreDefaults ratingStandardizerRestoreButton" hidden><span>Restore defaults</span></button>
+                    </div>
+
+                    <div class="fieldDescription ratingStandardizerPresetDescription"></div>
+                    <div class="ratingStandardizerError"></div>
+                    <div class="ratingStandardizerStatus"></div>
+
+                    <div class="fieldDescription mappingEditorHint">Switch to `Custom` to edit mappings manually.</div>
+                    <div class="ratingStandardizerMappingsEditor" hidden>
+                        <div class="ratingStandardizerMappingsWrap">
+                            <table class="tblForm ratingStandardizerMappingsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Original rating</th>
+                                        <th class="ratingStandardizerArrowCell"></th>
+                                        <th>Target rating</th>
+                                        <th class="ratingStandardizerDeleteCell"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="mappingRows"></tbody>
+                            </table>
+                        </div>
+
+                        <div class="ratingStandardizerActions">
+                            <button is="emby-button" type="button" class="button-flat btnAddMapping"><span>Add mapping</span></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="ratingStandardizerCard ratingStandardizerActionRow">
+                <button is="emby-button" type="submit" class="raised button-submit block"><span>Save</span></button>
+                <button is="emby-button" type="button" class="button-flat btnRunNow block"><span>Run Now</span></button>
+            </section>
+        </form>
+    </div>
+</div>

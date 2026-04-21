@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>RatingStandardizer.Emby</RootNamespace>
+    <AssemblyName>Emby.Plugin.RatingStandardizer</AssemblyName>
+    <EmbyVersion Condition="'$(EmbyVersion)' == ''">4.9.1.90</EmbyVersion>
+    <Version>1.0.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0</InformationalVersion>
+    <Authors>CassisCloud</Authors>
+    <Company>CassisCloud</Company>
+    <Product>Rating Standardizer</Product>
+    <Description>Automatically standardizes official ratings for movies and series using configurable mappings.</Description>
+    <PackageTags>jellyfin;emby;metadata;rating;official-rating</PackageTags>
+    <RepositoryUrl>https://github.com/CassisCloud/RatingStandardizer</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/CassisCloud/RatingStandardizer</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\RatingStandardizer.Core\*.cs" LinkBase="Core" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediaBrowser.Server.Core" Version="$(EmbyVersion)">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\configPage.html" />
+    <EmbeddedResource Include="Configuration\configPage.js" />
+  </ItemGroup>
+</Project>
