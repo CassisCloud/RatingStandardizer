@@ -1,5 +1,8 @@
 name: Release Plugins
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   push:
     tags:
@@ -126,16 +129,17 @@ jobs:
           Compress-Archive -Path ./artifacts/jellyfin/publish/* -DestinationPath $zip -Force
           $md5 = (Get-FileHash $zip -Algorithm MD5).Hash.ToLowerInvariant()
           Set-Content ./artifacts/jellyfin-md5.txt $md5 -NoNewline
+          New-Item -ItemType Directory -Path ./artifacts/jellyfin-package -Force | Out-Null
+          Copy-Item $zip ./artifacts/jellyfin-package/
+          Copy-Item ./artifacts/jellyfin-md5.txt ./artifacts/jellyfin-package/
+          Copy-Item ./manifest.json ./artifacts/jellyfin-package/
+          Copy-Item ./build.yaml ./artifacts/jellyfin-package/
 
       - name: Upload Jellyfin artifact
         uses: actions/upload-artifact@v4
         with:
           name: jellyfin-package
-          path: |
-            artifacts/ratingstandardizer-jellyfin_*.zip
-            artifacts/jellyfin-md5.txt
-            manifest.json
-            build.yaml
+          path: artifacts/jellyfin-package/*
 
   build-emby:
     runs-on: ubuntu-latest
@@ -181,15 +185,16 @@ jobs:
           Compress-Archive -Path ./artifacts/emby/publish/* -DestinationPath $zip -Force
           $md5 = (Get-FileHash $zip -Algorithm MD5).Hash.ToLowerInvariant()
           Set-Content ./artifacts/emby-md5.txt $md5 -NoNewline
+          New-Item -ItemType Directory -Path ./artifacts/emby-package -Force | Out-Null
+          Copy-Item $zip ./artifacts/emby-package/
+          Copy-Item ./artifacts/emby-md5.txt ./artifacts/emby-package/
+          Copy-Item ./manifest.emby.json ./artifacts/emby-package/
 
       - name: Upload Emby artifact
         uses: actions/upload-artifact@v4
         with:
           name: emby-package
-          path: |
-            artifacts/ratingstandardizer-emby_*.zip
-            artifacts/emby-md5.txt
-            manifest.emby.json
+          path: artifacts/emby-package/*
 
   release:
     runs-on: ubuntu-latest
@@ -230,15 +235,8 @@ jobs:
           tag: ${{ needs.prepare.outputs.tag }}
           bodyFile: artifacts/release-metadata/changelog.md
           artifacts: |
-            artifacts/jellyfin-package/*.zip
-            artifacts/jellyfin-package/*.txt
-            artifacts/jellyfin-package/*.json
-            artifacts/jellyfin-package/*.yaml
-            artifacts/jellyfin-package/*.sha256
-            artifacts/emby-package/*.zip
-            artifacts/emby-package/*.txt
-            artifacts/emby-package/*.json
-            artifacts/emby-package/*.sha256
+            artifacts/jellyfin-package/**/*
+            artifacts/emby-package/**/*
 
       - name: Checkout default branch
         uses: actions/checkout@v4
