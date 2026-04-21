@@ -1,0 +1,300 @@
+name: Release Plugins
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to build and release (for example: v1.0.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+      version: ${{ steps.meta.outputs.version }}
+      version4: ${{ steps.meta.outputs.version4 }}
+      timestamp: ${{ steps.meta.outputs.timestamp }}
+    steps:
+      - name: Determine tag and version
+        id: meta
+        shell: pwsh
+        run: |
+          $tag = if ('${{ github.event_name }}' -eq 'workflow_dispatch') { '${{ inputs.tag }}' } else { '${{ github.ref_name }}' }
+          if (-not $tag) { throw 'Tag could not be resolved.' }
+          $version = $tag.TrimStart('v')
+          $version4 = "$version.0"
+          $timestamp = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ')
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "version4=$version4" >> $env:GITHUB_OUTPUT
+          "timestamp=$timestamp" >> $env:GITHUB_OUTPUT
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.meta.outputs.tag }}
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: changelog
+        shell: pwsh
+        run: |
+          $previousTag = git describe --tags --abbrev=0 HEAD^ 2>$null
+          if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($previousTag)) {
+            $log = git log --pretty=format:'- %s (%h)'
+          } else {
+            $log = git log "$previousTag..HEAD" --pretty=format:'- %s (%h)'
+          }
+
+          if ([string]::IsNullOrWhiteSpace($log)) {
+            $log = '- Initial public release.'
+          }
+
+          New-Item -ItemType Directory -Path artifacts -Force | Out-Null
+          $path = Join-Path (Get-Location) 'artifacts/changelog.md'
+          Set-Content -Path $path -Value $log -NoNewline
+          "path=$path" >> $env:GITHUB_OUTPUT
+
+      - name: Upload changelog artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-metadata
+          path: artifacts/changelog.md
+
+  build-jellyfin:
+    runs-on: ubuntu-latest
+    needs: prepare
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.tag }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Download changelog
+        uses: actions/download-artifact@v4
+        with:
+          name: release-metadata
+          path: artifacts/release-metadata
+
+      - name: Publish Jellyfin plugin
+        shell: pwsh
+        run: |
+          dotnet publish ./RatingStandardizer.Jellyfin/RatingStandardizer.Jellyfin.csproj `
+            --configuration Release `
+            --output ./artifacts/jellyfin/publish `
+            -p:Version='${{ needs.prepare.outputs.version4 }}' `
+            -p:AssemblyVersion='${{ needs.prepare.outputs.version4 }}' `
+            -p:FileVersion='${{ needs.prepare.outputs.version4 }}' `
+            -p:InformationalVersion='${{ needs.prepare.outputs.version }}'
+
+      - name: Create Jellyfin meta.json
+        shell: pwsh
+        run: |
+          $meta = [ordered]@{
+            name = 'Rating Standardizer'
+            guid = 'f170154e-02fd-4f37-a008-70811ca49120'
+            overview = 'Normalize official ratings across your library.'
+            description = 'Automatically standardizes official ratings for movies and series using configurable mappings. Supports library update events and scheduled batch processing.'
+            owner = 'CassisCloud'
+            category = 'Metadata'
+            version = '${{ needs.prepare.outputs.version4 }}'
+            targetAbi = '10.11.0.0'
+            timestamp = '${{ needs.prepare.outputs.timestamp }}'
+            changelog = Get-Content './artifacts/release-metadata/changelog.md' -Raw
+            imageUrl = 'https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/assets/banner-pop.png'
+          }
+          $meta | ConvertTo-Json -Depth 5 | Set-Content ./artifacts/jellyfin/publish/meta.json
+
+      - name: Package Jellyfin plugin
+        shell: pwsh
+        run: |
+          Copy-Item ./assets/*.png ./artifacts/jellyfin/publish/
+          $zip = "./artifacts/ratingstandardizer-jellyfin_${{ needs.prepare.outputs.version4 }}.zip"
+          Compress-Archive -Path ./artifacts/jellyfin/publish/* -DestinationPath $zip -Force
+          $md5 = (Get-FileHash $zip -Algorithm MD5).Hash.ToLowerInvariant()
+          Set-Content ./artifacts/jellyfin-md5.txt $md5 -NoNewline
+
+      - name: Upload Jellyfin artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jellyfin-package
+          path: |
+            artifacts/ratingstandardizer-jellyfin_*.zip
+            artifacts/jellyfin-md5.txt
+            manifest.json
+            build.yaml
+
+  build-emby:
+    runs-on: ubuntu-latest
+    needs: prepare
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.tag }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Download changelog
+        uses: actions/download-artifact@v4
+        with:
+          name: release-metadata
+          path: artifacts/release-metadata
+
+      - name: Publish Emby plugin
+        shell: pwsh
+        run: |
+          dotnet publish ./RatingStandardizer.Emby/RatingStandardizer.Emby.csproj `
+            --configuration Release `
+            --output ./artifacts/emby/publish `
+            -p:Version='${{ needs.prepare.outputs.version4 }}' `
+            -p:AssemblyVersion='${{ needs.prepare.outputs.version4 }}' `
+            -p:FileVersion='${{ needs.prepare.outputs.version4 }}' `
+            -p:InformationalVersion='${{ needs.prepare.outputs.version }}'
+
+      - name: Copy Emby metadata assets
+        shell: pwsh
+        run: |
+          Copy-Item ./manifest.emby.json ./artifacts/emby/publish/
+          Copy-Item ./assets/*.png ./artifacts/emby/publish/
+
+      - name: Package Emby plugin
+        shell: pwsh
+        run: |
+          $zip = "./artifacts/ratingstandardizer-emby_${{ needs.prepare.outputs.version4 }}.zip"
+          Compress-Archive -Path ./artifacts/emby/publish/* -DestinationPath $zip -Force
+          $md5 = (Get-FileHash $zip -Algorithm MD5).Hash.ToLowerInvariant()
+          Set-Content ./artifacts/emby-md5.txt $md5 -NoNewline
+
+      - name: Upload Emby artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: emby-package
+          path: |
+            artifacts/ratingstandardizer-emby_*.zip
+            artifacts/emby-md5.txt
+            manifest.emby.json
+
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - prepare
+      - build-jellyfin
+      - build-emby
+    steps:
+      - name: Download changelog
+        uses: actions/download-artifact@v4
+        with:
+          name: release-metadata
+          path: artifacts/release-metadata
+
+      - name: Download Jellyfin package
+        uses: actions/download-artifact@v4
+        with:
+          name: jellyfin-package
+          path: artifacts/jellyfin-package
+
+      - name: Download Emby package
+        uses: actions/download-artifact@v4
+        with:
+          name: emby-package
+          path: artifacts/emby-package
+
+      - name: Create checksums
+        shell: pwsh
+        run: |
+          Get-ChildItem artifacts -Recurse -Filter *.zip | ForEach-Object {
+            $sha = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            Set-Content ($_.FullName + '.sha256') $sha -NoNewline
+          }
+
+      - name: Create GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ needs.prepare.outputs.tag }}
+          bodyFile: artifacts/release-metadata/changelog.md
+          artifacts: |
+            artifacts/jellyfin-package/*.zip
+            artifacts/jellyfin-package/*.txt
+            artifacts/jellyfin-package/*.json
+            artifacts/jellyfin-package/*.yaml
+            artifacts/jellyfin-package/*.sha256
+            artifacts/emby-package/*.zip
+            artifacts/emby-package/*.txt
+            artifacts/emby-package/*.json
+            artifacts/emby-package/*.sha256
+
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Download changelog again
+        uses: actions/download-artifact@v4
+        with:
+          name: release-metadata
+          path: artifacts/release-metadata
+
+      - name: Download release artifacts again
+        uses: actions/download-artifact@v4
+        with:
+          pattern: '*-package'
+          path: artifacts
+          merge-multiple: true
+
+      - name: Update manifests
+        shell: pwsh
+        run: |
+          $version4 = '${{ needs.prepare.outputs.version4 }}'
+          $timestamp = '${{ needs.prepare.outputs.timestamp }}'
+          $changelog = Get-Content artifacts/release-metadata/changelog.md -Raw
+          $jellyfinChecksum = Get-Content artifacts/jellyfin-md5.txt -Raw
+          $embyChecksum = Get-Content artifacts/emby-md5.txt -Raw
+          $jellyfinSource = "https://github.com/CassisCloud/RatingStandardizer/releases/download/${{ needs.prepare.outputs.tag }}/ratingstandardizer-jellyfin_$version4.zip"
+          $embySource = "https://github.com/CassisCloud/RatingStandardizer/releases/download/${{ needs.prepare.outputs.tag }}/ratingstandardizer-emby_$version4.zip"
+
+          $jellyfin = Get-Content manifest.json -Raw | ConvertFrom-Json
+          $jellyfinVersion = [ordered]@{
+            version = $version4
+            changelog = $changelog
+            targetAbi = '10.11.0.0'
+            sourceUrl = $jellyfinSource
+            checksum = $jellyfinChecksum
+            timestamp = $timestamp
+          }
+          $jellyfin[0].versions = @($jellyfinVersion) + @($jellyfin[0].versions | Where-Object { $_.version -ne $version4 })
+          $jellyfin | ConvertTo-Json -Depth 10 | Set-Content manifest.json
+
+          $emby = Get-Content manifest.emby.json -Raw | ConvertFrom-Json
+          $embyVersion = [ordered]@{
+            version = $version4
+            changelog = $changelog
+            sourceUrl = $embySource
+            checksum = $embyChecksum
+            timestamp = $timestamp
+            targetFilename = 'Emby.Plugin.RatingStandardizer.dll'
+          }
+          $emby[0].versions = @($embyVersion) + @($emby[0].versions | Where-Object { $_.version -ne $version4 })
+          $emby | ConvertTo-Json -Depth 10 | Set-Content manifest.emby.json
+
+      - name: Commit updated manifests
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'ci: update plugin manifests for ${{ needs.prepare.outputs.tag }}'
+          file_pattern: manifest.json manifest.emby.json

@@ -1,0 +1,16 @@
+---
+name: "Rating Standardizer"
+guid: "f170154e-02fd-4f37-a008-70811ca49120"
+version: "1.0.0.0"
+targetAbi: "10.11.0.0"
+framework: "net9.0"
+overview: "Normalize official ratings across your library."
+description: >
+  Automatically standardizes official ratings for movies and series using configurable
+  mappings. Supports library update events and scheduled batch processing.
+category: "Metadata"
+owner: "CassisCloud"
+artifacts:
+  - "Jellyfin.Plugin.RatingStandardizer.dll"
+changelog: >
+  Initial public release.

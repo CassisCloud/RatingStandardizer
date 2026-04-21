@@ -1,0 +1,21 @@
+[
+  {
+    "guid": "f170154e-02fd-4f37-a008-70811ca49120",
+    "name": "Rating Standardizer",
+    "overview": "Normalize official ratings across your library.",
+    "description": "Automatically standardizes official ratings for movies and series using configurable mappings. Supports library update events and scheduled batch processing.",
+    "owner": "CassisCloud",
+    "category": "Metadata",
+    "imageUrl": "https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/assets/banner-pop.png",
+    "versions": [
+      {
+        "version": "1.0.0.0",
+        "changelog": "Initial public release.",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/CassisCloud/RatingStandardizer/releases/download/v1.0.0/ratingstandardizer-jellyfin_1.0.0.0.zip",
+        "checksum": "TO_BE_FILLED_BY_RELEASE_WORKFLOW",
+        "timestamp": "TO_BE_FILLED_BY_RELEASE_WORKFLOW"
+      }
+    ]
+  }
+]
