@@ -15,7 +15,7 @@
       "changelog": "- docs: add installation instructions (810ab09)- feat: add release metadata and artwork (3829bda)- feat: add Jellyfin and Emby plugin projects (f687952)- Initial commit (aedd52a)",
       "sourceUrl": "https://github.com/CassisCloud/RatingStandardizer/releases/download/v1.0.0/Emby.Plugin.RatingStandardizer.dll",
       "checksum": "5256998309879c19b2ed0163a84f8810",
-      "timestamp": "2026-04-21T12:03:50Z",
+      "timestamp": "2026-04-21T12:05:58Z",
       "targetFilename": "Emby.Plugin.RatingStandardizer.dll"
     }
   ]
