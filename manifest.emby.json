@@ -11,6 +11,14 @@
   "previewImage": "https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/assets/banner-pop.png",
   "versions": [
     {
+      "version": "1.0.3.0",
+      "changelog": "- fix: harden rating standardization execution (ce1a583)- ci: update plugin manifests for v1.0.2 (deafb51)- ci: update plugin manifests for v1.0.0 (b675602)- ci: update plugin manifests for v1.0.0 (30edd93)",
+      "sourceUrl": "https://github.com/CassisCloud/RatingStandardizer/releases/download/v1.0.3/Emby.Plugin.RatingStandardizer.dll",
+      "checksum": "e726477794fd86332a54facc97ec19f8",
+      "timestamp": "2026-04-21T13:34:29Z",
+      "targetFilename": "Emby.Plugin.RatingStandardizer.dll"
+    },
+    {
       "version": "1.0.2.0",
       "changelog": "- fix: simplify release assets and installation docs (10401ec)- ci: update plugin manifests for v1.0.0 (e9f0cee)- fix: update existing releases in workflow (d22392b)- fix: package release artifacts for GitHub Actions (d35a04a)",
       "sourceUrl": "https://github.com/CassisCloud/RatingStandardizer/releases/download/v1.0.2/Emby.Plugin.RatingStandardizer.dll",
