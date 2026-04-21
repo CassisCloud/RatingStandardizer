@@ -234,6 +234,8 @@ jobs:
         with:
           tag: ${{ needs.prepare.outputs.tag }}
           bodyFile: artifacts/release-metadata/changelog.md
+          allowUpdates: true
+          replacesArtifacts: true
           artifacts: |
             artifacts/jellyfin-package/**/*
             artifacts/emby-package/**/*
