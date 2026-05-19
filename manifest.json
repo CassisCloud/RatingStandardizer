@@ -1,29 +1,39 @@
 [
-  {
-    "guid": "f170154e-02fd-4f37-a008-70811ca49120",
-    "name": "Rating Standardizer",
-    "overview": "Normalize official ratings across your library.",
-    "description": "Automatically standardizes official ratings for movies and series using configurable mappings. Supports library update events and scheduled batch processing.",
-    "owner": "CassisCloud",
-    "category": "Metadata",
-    "imageUrl": "https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/assets/banner-pop.png",
-    "versions": [
-      {
-        "version": "1.0.8.0",
-        "changelog": "- fix: use Jellyfin plugin repository manifest format (00505e3)- chore: keep public manifest release-only (52b0ff7)- ci: update plugin manifests for v1.0.7 (742a689)",
-        "targetAbi": "10.11.0.0",
-        "sourceUrl": "https://github.com/CassisCloud/RatingStandardizer/releases/download/v1.0.8/rating-standardizer-jellyfin_1.0.8.0.zip",
-        "checksum": "45602429610759c5325ced2ab7bfd221",
-        "timestamp": "2026-05-19T12:21:45Z"
-      },
-      {
-        "version": "1.0.7.0",
-        "changelog": "- Initial public release (2957ddf)- Initial commit (e29e4ac)",
-        "targetAbi": "10.11.0.0",
-        "sourceUrl": "https://github.com/CassisCloud/RatingStandardizer/releases/download/v1.0.7/rating-standardizer-jellyfin_1.0.7.0.zip",
-        "checksum": "5c6c83cde88ac041876a3cf7b8e78dbc",
-        "timestamp": "2026-05-19T11:56:42Z"
-      }
-    ]
-  }
+  [
+    {
+      "guid": "f170154e-02fd-4f37-a008-70811ca49120",
+      "name": "Rating Standardizer",
+      "overview": "Normalize official ratings across your library.",
+      "description": "Automatically standardizes official ratings for movies and series using configurable mappings. Supports library update events and scheduled batch processing.",
+      "owner": "CassisCloud",
+      "category": "Metadata",
+      "imageUrl": "https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/assets/banner-pop.png",
+      "versions": [
+        {
+          "version": "1.0.9.0",
+          "changelog": "- fix: preserve manifest array during release updates (bb8efff)",
+          "targetAbi": "10.11.0.0",
+          "sourceUrl": "https://github.com/CassisCloud/RatingStandardizer/releases/download/v1.0.9/rating-standardizer-jellyfin_1.0.9.0.zip",
+          "checksum": "547c9822cefa2772d21b14d8492294a3",
+          "timestamp": "2026-05-19T12:25:15Z"
+        },
+        {
+          "version": "1.0.8.0",
+          "changelog": "- fix: use Jellyfin plugin repository manifest format (00505e3)- chore: keep public manifest release-only (52b0ff7)- ci: update plugin manifests for v1.0.7 (742a689)",
+          "targetAbi": "10.11.0.0",
+          "sourceUrl": "https://github.com/CassisCloud/RatingStandardizer/releases/download/v1.0.8/rating-standardizer-jellyfin_1.0.8.0.zip",
+          "checksum": "45602429610759c5325ced2ab7bfd221",
+          "timestamp": "2026-05-19T12:21:45Z"
+        },
+        {
+          "version": "1.0.7.0",
+          "changelog": "- Initial public release (2957ddf)- Initial commit (e29e4ac)",
+          "targetAbi": "10.11.0.0",
+          "sourceUrl": "https://github.com/CassisCloud/RatingStandardizer/releases/download/v1.0.7/rating-standardizer-jellyfin_1.0.7.0.zip",
+          "checksum": "5c6c83cde88ac041876a3cf7b8e78dbc",
+          "timestamp": "2026-05-19T11:56:42Z"
+        }
+      ]
+    }
+  ]
 ]
