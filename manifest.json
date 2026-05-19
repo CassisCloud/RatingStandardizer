@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/assets/banner-pop.png",
     "versions": [
       {
+        "version": "1.0.8.0",
+        "changelog": "- fix: use Jellyfin plugin repository manifest format (00505e3)- chore: keep public manifest release-only (52b0ff7)- ci: update plugin manifests for v1.0.7 (742a689)",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/CassisCloud/RatingStandardizer/releases/download/v1.0.8/rating-standardizer-jellyfin_1.0.8.0.zip",
+        "checksum": "45602429610759c5325ced2ab7bfd221",
+        "timestamp": "2026-05-19T12:21:45Z"
+      },
+      {
         "version": "1.0.7.0",
         "changelog": "- Initial public release (2957ddf)- Initial commit (e29e4ac)",
         "targetAbi": "10.11.0.0",
