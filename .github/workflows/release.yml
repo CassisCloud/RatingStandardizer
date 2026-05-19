@@ -226,7 +226,9 @@ jobs:
           $jellyfinChecksum = Get-Content $jellyfinChecksumPath.FullName -Raw
           $jellyfinSource = "https://github.com/${{ github.repository }}/releases/download/${{ needs.prepare.outputs.tag }}/rating-standardizer-jellyfin_$version4.zip"
 
-          $jellyfin = Get-Content manifest.json -Raw | ConvertFrom-Json
+          $jellyfinManifest = @(Get-Content manifest.json -Raw | ConvertFrom-Json -NoEnumerate)
+          if ($jellyfinManifest.Count -eq 0) { throw 'manifest.json does not contain any plugin entries.' }
+          $jellyfin = $jellyfinManifest[0]
           $jellyfinVersion = [ordered]@{
             version = $version4
             changelog = $changelog
@@ -236,7 +238,7 @@ jobs:
             timestamp = $timestamp
           }
           $jellyfin.versions = @($jellyfinVersion) + @($jellyfin.versions | Where-Object { $_.version -ne $version4 })
-          $jellyfin | ConvertTo-Json -Depth 10 | Set-Content manifest.json
+          ConvertTo-Json -InputObject @($jellyfinManifest) -Depth 10 -AsArray | Set-Content manifest.json
 
       - name: Commit updated manifests
         uses: stefanzweifel/git-auto-commit-action@v5
