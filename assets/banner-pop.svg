@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title>Rating Standardizer pop banner</title>
+  <desc>Vibrant banner showing colorful ratings being normalized into a synchronized result.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#21083b"/>
+      <stop offset="100%" stop-color="#6a1bb0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" rx="44" fill="url(#bg)"/>
+  <circle cx="168" cy="164" r="88" fill="#ffcf5a"/>
+  <circle cx="1048" cy="548" r="120" fill="#24d2c7" opacity="0.35"/>
+  <circle cx="1168" cy="182" r="72" fill="#ff7b7b" opacity="0.65"/>
+  <text x="116" y="194" font-family="Segoe UI, Arial, sans-serif" font-size="76" font-weight="900" fill="#ffffff">Rating Standardizer</text>
+  <text x="116" y="258" font-family="Segoe UI, Arial, sans-serif" font-size="32" font-weight="600" fill="#f1e8ff">Bring mixed official ratings into one consistent standard.</text>
+  <g transform="translate(120 344)">
+    <circle cx="68" cy="68" r="68" fill="#ffcf5a"/>
+    <text x="68" y="82" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="44" font-weight="900" fill="#4c3300">PG</text>
+  </g>
+  <g transform="translate(320 332)">
+    <circle cx="80" cy="80" r="80" fill="#24d2c7"/>
+    <text x="80" y="95" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="42" font-weight="900" fill="#093d3a">12+</text>
+  </g>
+  <g transform="translate(546 352)">
+    <circle cx="60" cy="60" r="60" fill="#ff7b7b"/>
+    <text x="60" y="75" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="36" font-weight="900" fill="#561313">R</text>
+  </g>
+  <path d="M690 412h152" stroke="#ffffff" stroke-width="20" stroke-linecap="round"/>
+  <path d="M800 358l82 54-82 54" fill="none" stroke="#ffffff" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <g transform="translate(904 288)">
+    <rect width="252" height="244" rx="50" fill="#ffffff"/>
+    <text x="126" y="128" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="72" font-weight="900" fill="#5a1f92">SYNC</text>
+    <text x="126" y="178" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#7b4eae">Official rating</text>
+  </g>
+  <text x="116" y="592" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" fill="#f6efff">Live library updates plus weekly scheduled cleanup.</text>
+</svg>

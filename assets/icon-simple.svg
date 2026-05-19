@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title>Rating Standardizer simple icon</title>
+  <desc>Minimal icon showing rating badges normalized into one standard badge.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#161b2f"/>
+      <stop offset="100%" stop-color="#27345f"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="url(#bg)"/>
+  <rect x="34" y="56" width="62" height="46" rx="16" fill="#7165ff" opacity="0.92"/>
+  <rect x="34" y="112" width="62" height="46" rx="16" fill="#00b3ad" opacity="0.92"/>
+  <rect x="160" y="84" width="62" height="88" rx="18" fill="#ffffff"/>
+  <path d="M114 128h34" stroke="#d6defc" stroke-width="12" stroke-linecap="round"/>
+  <path d="M138 106l22 22-22 22" fill="none" stroke="#d6defc" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="65" y="86" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="24" font-weight="700" fill="#ffffff">PG</text>
+  <text x="65" y="142" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="700" fill="#ffffff">12+</text>
+  <text x="191" y="138" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="800" fill="#1d2750">STD</text>
+</svg>

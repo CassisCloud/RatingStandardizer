@@ -1,0 +1,90 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using MediaBrowser.Controller.Entities;
+using RatingStandardizer.Core;
+
+namespace RatingStandardizer.Jellyfin;
+
+internal static class LibraryFilter
+{
+    public static HashSet<string>? CreateTargetLookup(IReadOnlyCollection<string>? targetLibraryIds)
+    {
+        if (targetLibraryIds is null || targetLibraryIds.Count == 0)
+        {
+            return null;
+        }
+
+        var lookup = targetLibraryIds
+            .Where(static id => !string.IsNullOrWhiteSpace(id))
+            .Select(static id => NormalizeId(id))
+            .Where(static id => id.Length > 0)
+            .ToHashSet(StringComparer.Ordinal);
+
+        return lookup.Count > 0 ? lookup : null;
+    }
+
+    public static bool IsMatch(BaseItem item, HashSet<string>? targetLookup)
+    {
+        if (targetLookup is null)
+        {
+            return true;
+        }
+
+        for (BaseItem? current = item; current is not null; current = current.GetParent())
+        {
+            if (ContainsId(current.Id, targetLookup))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static LibraryRatingProfile? FindProfile(BaseItem item, IReadOnlyCollection<LibraryRatingProfile>? profiles)
+    {
+        if (profiles is null || profiles.Count == 0)
+        {
+            return null;
+        }
+
+        var lookup = profiles
+            .Where(static profile => !string.IsNullOrWhiteSpace(profile.LibraryId))
+            .GroupBy(static profile => NormalizeId(profile.LibraryId), StringComparer.Ordinal)
+            .Where(static group => group.Key.Length > 0)
+            .ToDictionary(static group => group.Key, static group => group.Last(), StringComparer.Ordinal);
+
+        for (BaseItem? current = item; current is not null; current = current.GetParent())
+        {
+            var normalizedId = NormalizeId(current.Id.ToString());
+            if (normalizedId.Length > 0 && lookup.TryGetValue(normalizedId, out var profile))
+            {
+                return profile;
+            }
+        }
+
+        return null;
+    }
+
+    private static bool ContainsId(object? id, HashSet<string> targetLookup)
+    {
+        if (id is null)
+        {
+            return false;
+        }
+
+        var normalizedId = NormalizeId(id.ToString());
+        return normalizedId.Length > 0 && targetLookup.Contains(normalizedId);
+    }
+
+    private static string NormalizeId(string? id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            return string.Empty;
+        }
+
+        return id.Trim().Replace("-", string.Empty, StringComparison.Ordinal).ToUpperInvariant();
+    }
+}

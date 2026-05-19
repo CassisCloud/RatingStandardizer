@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+using MediaBrowser.Common.Configuration;
+using MediaBrowser.Common.Plugins;
+using MediaBrowser.Model.Plugins;
+using MediaBrowser.Model.Serialization;
+
+namespace RatingStandardizer.Emby;
+
+/// <summary>
+/// The main Emby plugin class.
+/// </summary>
+public sealed class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
+{
+    public const string PluginVersion = "1.0.0";
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Plugin"/> class.
+    /// </summary>
+    /// <param name="applicationPaths">The application paths.</param>
+    /// <param name="xmlSerializer">The xml serializer.</param>
+    public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer)
+        : base(applicationPaths, xmlSerializer)
+    {
+        Instance = this;
+        HistoryStore = new JsonShardRatingHistoryStore(System.IO.Path.Combine(applicationPaths.DataPath, "RatingStandardizer", "history"));
+    }
+
+    /// <summary>
+    /// Gets the current plugin instance.
+    /// </summary>
+    public static Plugin? Instance { get; private set; }
+
+    public static RatingStandardizer.Core.IRatingHistoryStore? HistoryStore { get; private set; }
+
+    /// <inheritdoc />
+    public override string Name => "Rating Standardizer";
+
+    /// <inheritdoc />
+    public override string Description => "Automatically standardizes official ratings for movies and series using configurable mappings.";
+
+    /// <inheritdoc />
+    public override Guid Id => Guid.Parse("e2688ed7-4bb2-4bba-9e0d-6ccfd1f2d8f3");
+
+    /// <inheritdoc />
+    public IEnumerable<PluginPageInfo> GetPages()
+    {
+        var type = GetType();
+
+        return
+        [
+            new PluginPageInfo
+            {
+                Name = "ratingstandardizer",
+                DisplayName = Name,
+                EmbeddedResourcePath = type.Namespace + ".Configuration.configPage.html",
+                EnableInMainMenu = true,
+                MenuSection = "server",
+                MenuIcon = "lock"
+            },
+            new PluginPageInfo
+            {
+                Name = "ratingstandardizerjs",
+                EmbeddedResourcePath = type.Namespace + ".Configuration.configPage.js"
+            }
+        ];
+    }
+}
