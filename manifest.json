@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/CassisCloud/RatingStandardizer/main/assets/banner-pop.png",
     "versions": [
       {
+        "version": "1.0.10.0",
+        "changelog": "- fix: avoid nested manifest arrays (6dc203c)- ci: update plugin manifests for v1.0.9 (7cd8cf5)",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/CassisCloud/RatingStandardizer/releases/download/v1.0.10/rating-standardizer-jellyfin_1.0.10.0.zip",
+        "checksum": "47150ab60a5d9350c97551a6c0988cfb",
+        "timestamp": "2026-05-19T12:28:54Z"
+      },
+      {
         "version": "1.0.9.0",
         "changelog": "- fix: preserve manifest array during release updates (bb8efff)",
         "targetAbi": "10.11.0.0",
